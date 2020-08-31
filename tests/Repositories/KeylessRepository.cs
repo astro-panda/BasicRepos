@@ -2,7 +2,7 @@
 
 namespace AstroPanda.Data.Test.Repositories
 {
-    public class KeylessRepository : RepositoryBase<Moamrath>
+    public class KeylessRepository : RepositoryBase<Trillig>
     {
         public KeylessRepository(TestDbContext db) : base(db) { }
     }

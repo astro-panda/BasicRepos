@@ -43,7 +43,7 @@ namespace AstroPanda.Data
         /// </summary>
         /// <param name="ids">The identifying key of the target entity</param>
         /// <returns>A <see cref="Task{Boolean}"/> that will be <c>true</c> if exists, otherwise <c>false</c></returns>
-        public virtual async Task<bool> Exists(TKey[] ids) => await Entities.Where(x => ids.Contains(x.Id)).CountAsync() == ids.Length;
+        public virtual async Task<bool> Exists(params TKey[] ids) => await Entities.Where(x => ids.Contains(x.Id)).CountAsync() == ids.Length;
 
         /// <summary>
         /// Gets an entity by key
