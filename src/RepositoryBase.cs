@@ -107,8 +107,13 @@ namespace AstroPanda.Data
         /// <returns></returns>
         public virtual Task AddAsync(params T[] objects)
         {
-            Entities.AddRange(objects);
-            return Db.SaveChangesAsync();
+            if(objects != null)
+            {
+                Entities.AddRange(objects);
+                return Db.SaveChangesAsync();
+            }
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
