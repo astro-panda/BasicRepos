@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace AstroPanda.Data
 {
     public interface IKeyedRepository<T, TKey> : IRepository<T> 
-        where T : class
+        where T : class, IKeyedEntity<TKey>
         where TKey : IEquatable<TKey>
     {
         /// <summary>
