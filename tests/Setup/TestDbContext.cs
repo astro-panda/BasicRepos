@@ -7,6 +7,11 @@ namespace AstroPanda.Data.Test.Setup
 {
     public class TestDbContext : DbContext
     {
+        public TestDbContext() : this(new DbContextOptions<TestDbContext>())
+        {
+
+        }
+
         public TestDbContext(DbContextOptions<TestDbContext> options) : base(options)
         {
 
