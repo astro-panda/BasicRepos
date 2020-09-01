@@ -130,7 +130,14 @@ namespace AstroPanda.Data
         /// <returns>A <see cref="Task"/> representing the work of deleting</returns>
         public Task DeleteAsync(IEnumerable<T> objects)
         {
-            Entities.RemoveRange(objects);
+            if(objects.Count() > 1)
+            {
+                Entities.RemoveRange(objects);
+            }
+            else
+            {
+                Entities.Remove(objects.FirstOrDefault());
+            }
             return Db.SaveChangesAsync();
         }
 

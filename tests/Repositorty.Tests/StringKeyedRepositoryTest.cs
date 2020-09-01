@@ -9,35 +9,30 @@ using Xunit;
 
 namespace AstroPanda.Data.Test.RepositortyTests
 {
-    public class StringKeyedRepositoryTest
+    public class StringKeyedRepositoryTest : IClassFixture<DataFixture>
     {
-        public DbContextOptions<TestDbContext> DbOptions;
         public TestDbContext _db;
 
         public BrilligRepository sut;
 
-        public StringKeyedRepositoryTest()
+        public StringKeyedRepositoryTest(DataFixture fixture)
         {
-            DbOptions = new DbContextOptionsBuilder<TestDbContext>().UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()).Options;
-            _db = new TestDbContext(DbOptions);            
+            _db = fixture.Db;
         }
 
         [Fact]
         public void WhenConstructingTheRepository_ItWill_BeCreated()
         {
-            _db.Database.EnsureDeleted();
-            _db.Database.EnsureCreated();
             sut = new BrilligRepository(_db);
 
             Assert.NotNull(sut);
             Assert.IsAssignableFrom<IKeyedRepository<Brillig, string>>(sut);
-
         }
 
         [Fact]
         public async Task DeletingEntitiesByKey_RemoveEntriesWithExisitngKeys()
         {
-            // Arrange
+            // Arrange            
             await _db.Database.EnsureDeletedAsync();
             await _db.Database.EnsureCreatedAsync();
             var targetIds = new[] { "1", "2", "3" };
@@ -60,9 +55,7 @@ namespace AstroPanda.Data.Test.RepositortyTests
         public async Task DeletingEntitiesByKey_WillNotAffectNonExistentKeys()
         {
             // Arrange
-            await _db.Database.EnsureDeletedAsync();
-            await _db.Database.EnsureCreatedAsync();
-            var targetIds = new[] { "1", "22", "33" };
+            var targetIds = new[] { "2", "22", "33" };
             var preBrilligs = _db.Brilligs.Where(x => targetIds.Contains(x.Id)).ToArray();
             Assert.Single(preBrilligs);
 
@@ -78,9 +71,7 @@ namespace AstroPanda.Data.Test.RepositortyTests
 
         [Fact]
         public async Task AttemptingADelete_WithEmptyIds_HasNoEffect()
-        {
-            await _db.Database.EnsureDeletedAsync();
-            await _db.Database.EnsureCreatedAsync();
+        { 
             // Arrange
             sut = new BrilligRepository(_db);
             var preBrilligs = await _db.Brilligs.CountAsync();
@@ -97,8 +88,6 @@ namespace AstroPanda.Data.Test.RepositortyTests
         [Fact]
         public async Task AttemptingADelete_WithEmptyIdCollection_HasNoEffect()
         {
-            await _db.Database.EnsureDeletedAsync();
-            await _db.Database.EnsureCreatedAsync();
             // Arrange
             var ids = new string[] { };
             sut = new BrilligRepository(_db);
@@ -123,8 +112,6 @@ namespace AstroPanda.Data.Test.RepositortyTests
         [InlineData("7")]
         public async Task CheckingExistence_WillReturnTrue_WhenExists(string id)
         {
-            await _db.Database.EnsureDeletedAsync();
-            await _db.Database.EnsureCreatedAsync();
             // Arrange
             sut = new BrilligRepository(_db);
 
@@ -145,8 +132,6 @@ namespace AstroPanda.Data.Test.RepositortyTests
         [InlineData("g")]
         public async Task CheckingExistence_WillReturnFalse_WhenNotExists(string id)
         {
-            await _db.Database.EnsureDeletedAsync();
-            await _db.Database.EnsureCreatedAsync();
             // Arrange
             sut = new BrilligRepository(_db);
 
@@ -165,9 +150,9 @@ namespace AstroPanda.Data.Test.RepositortyTests
         [InlineData("5", "6", "7")]
         public async Task CheckingExistenceOfMultiples_WillReturnTrue_WhenAllExist(string id1, string id2, string id3)
         {
+            // Arrange
             await _db.Database.EnsureDeletedAsync();
             await _db.Database.EnsureCreatedAsync();
-            // Arrange
             sut = new BrilligRepository(_db);
 
             // Act
@@ -186,8 +171,8 @@ namespace AstroPanda.Data.Test.RepositortyTests
         public async Task CheckingExistenceOfMultiples_WillReturnFalse_WhenAnyNotExist(string id1, string id2, string id3)
         {
             // Arrange
-            await _db.Database.EnsureCreatedAsync();
-            await _db.Database.EnsureDeletedAsync();
+            
+     
             sut = new BrilligRepository(_db);
 
             // Act
@@ -207,8 +192,8 @@ namespace AstroPanda.Data.Test.RepositortyTests
         [InlineData("7")]
         public async Task GetAsync_WillReturnTheCorrectValue_WhenExists(string id)
         {
-            await _db.Database.EnsureDeletedAsync();
-            await _db.Database.EnsureCreatedAsync();
+     
+            
             // Arrange
             sut = new BrilligRepository(_db);
 
@@ -232,8 +217,6 @@ namespace AstroPanda.Data.Test.RepositortyTests
         public async Task GetAsync_WillReturnNull_WhenNotExists(string id)
         {
             // Arrange
-            await _db.Database.EnsureDeletedAsync();
-            await _db.Database.EnsureCreatedAsync();
             sut = new BrilligRepository(_db);
 
             // Act            
@@ -241,7 +224,6 @@ namespace AstroPanda.Data.Test.RepositortyTests
 
             // Assert
             Assert.Null(result);            
-
         }
 
         [Theory]
@@ -254,8 +236,6 @@ namespace AstroPanda.Data.Test.RepositortyTests
         public async Task GetAsyncMultiple_WillReturnOnlyThoseWithMatchingKeys(string id1, string id2, string id3)
         {
             // Arrange
-            await _db.Database.EnsureDeletedAsync();
-            await _db.Database.EnsureCreatedAsync();
             sut = new BrilligRepository(_db);
 
             // Act
@@ -276,8 +256,6 @@ namespace AstroPanda.Data.Test.RepositortyTests
         public async Task GetAsyncMultiple_WillReturnAllMatchingEntities(string id1, string id2, string id3)
         {
             // Arrange
-            await _db.Database.EnsureDeletedAsync();
-            await _db.Database.EnsureCreatedAsync();
             sut = new BrilligRepository(_db);
 
             // Act

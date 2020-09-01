@@ -10,17 +10,15 @@ using Xunit.Extensions;
 
 namespace AstroPanda.Data.Test.RepositortyTests
 {
-    public class GuidKeyedRepositoryTest
+    public class GuidKeyedRepositoryTest : IClassFixture<DataFixture>
     {        
         public DbContextOptions<TestDbContext> DbOptions;
         public TestDbContext _db;
 
         public MoamrathRepository sut;
-        public GuidKeyedRepositoryTest()
+        public GuidKeyedRepositoryTest(DataFixture fixture)
         {
-            DbOptions = new DbContextOptionsBuilder<TestDbContext>().UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()).Options;
-            _db = new TestDbContext(DbOptions);
-            _db.Database.EnsureCreated();
+            _db = fixture.Db;
         }
 
         [Fact]
@@ -37,9 +35,12 @@ namespace AstroPanda.Data.Test.RepositortyTests
         public async Task DeletingEntitiesByKey_RemoveEntriesWithExisitngKeys()
         {
             // Arrange
-            await _db.Database.EnsureCreatedAsync();
-            var ids = new MoamrathIdsData();
-            var targetIds = new[] { (Guid)ids.ElementAt(0)[0], (Guid)ids.ElementAt(0)[1], (Guid)ids.ElementAt(0)[2] };
+            var targetIds = new[]
+            {
+                Guid.Parse("EFED4F70-8B1A-4BB3-B14B-B6EA2EEE2267"),
+                Guid.Parse("323A3F72-3DAB-422B-A306-8E155CE1F61A"),
+                Guid.Parse("8299D594-0AA4-4D33-8EB2-4557A2221AF8")
+            };
 
             var preMoamraths = _db.Moamraths.Where(x => targetIds.Contains(x.Id)).ToArray();
             Assert.Equal(3, preMoamraths.Length);
@@ -52,7 +53,6 @@ namespace AstroPanda.Data.Test.RepositortyTests
             // Assert
             var postMoamraths = _db.Moamraths.Where(x => targetIds.Contains(x.Id)).ToArray();
             Assert.Empty(postMoamraths);
-            await _db.Database.EnsureDeletedAsync();
         }
 
 
@@ -60,10 +60,10 @@ namespace AstroPanda.Data.Test.RepositortyTests
         public async Task DeletingEntitiesByKey_WillNotAffectNonExistentKeys()
         {
             // Arrange
+            await _db.Database.EnsureDeletedAsync();
             await _db.Database.EnsureCreatedAsync();
-            var ids = new MoamrathIdsData();
-            var targetIds = new[] { (Guid)ids.ElementAt(0)[0], Guid.NewGuid(), Guid.NewGuid() };
-            var preMoamraths = _db.Moamraths.Where(x => targetIds.Contains(x.Id)).ToArray();
+            var targetIds = new[] { Guid.Parse("EFED4F70-8B1A-4BB3-B14B-B6EA2EEE2267"), Guid.NewGuid(), Guid.NewGuid() };
+            var preMoamraths = await _db.Moamraths.Where(x => targetIds.Contains(x.Id)).ToArrayAsync();
             Assert.Single(preMoamraths);
 
             sut = new MoamrathRepository(_db);
@@ -72,15 +72,13 @@ namespace AstroPanda.Data.Test.RepositortyTests
             await sut.DeleteAsync(targetIds);
 
             // Assert
-            var postMoamraths = _db.Moamraths.Where(x => targetIds.Contains(x.Id)).ToArray();
+            var postMoamraths = await _db.Moamraths.Where(x => targetIds.Contains(x.Id)).ToArrayAsync();
             Assert.Empty(postMoamraths);
-            await _db.Database.EnsureDeletedAsync();
         }
 
         [Fact]
         public async Task AttemptingADelete_WithEmptyIds_HasNoEffect()
-        {
-            await _db.Database.EnsureCreatedAsync();
+        { 
             // Arrange
             sut = new MoamrathRepository(_db);
             var preMoamraths = await _db.Moamraths.CountAsync();
@@ -91,14 +89,11 @@ namespace AstroPanda.Data.Test.RepositortyTests
             // Assert
             var postMoamraths = await _db.Moamraths.CountAsync();
             Assert.Equal(preMoamraths, postMoamraths);
-
-            await _db.Database.EnsureDeletedAsync();
         }
 
         [Fact]
         public async Task AttemptingADelete_WithEmptyIdCollection_HasNoEffect()
         {
-            await _db.Database.EnsureCreatedAsync();
             // Arrange
             var ids = new Guid[] { };
             sut = new MoamrathRepository(_db);
@@ -110,8 +105,6 @@ namespace AstroPanda.Data.Test.RepositortyTests
             // Assert
             var postMoamraths = await _db.Moamraths.CountAsync();
             Assert.Equal(preMoamraths, postMoamraths);
-
-            await _db.Database.EnsureDeletedAsync();
         }
 
         [Theory]
@@ -122,7 +115,6 @@ namespace AstroPanda.Data.Test.RepositortyTests
         [InlineData("ABABF0EA-4128-4830-8471-B634585145D9")]   
         public async Task CheckingExistence_WillReturnTrue_WhenExists(string id)
         {
-            await _db.Database.EnsureCreatedAsync();
             // Arrange
             sut = new MoamrathRepository(_db);
 
@@ -131,7 +123,6 @@ namespace AstroPanda.Data.Test.RepositortyTests
 
             // Assert
             Assert.True(result);
-            await _db.Database.EnsureDeletedAsync();
         }
 
 
@@ -141,7 +132,6 @@ namespace AstroPanda.Data.Test.RepositortyTests
         [InlineData(3)]
         public async Task CheckingExistence_WillReturnFalse_WhenNotExists(int iteration)
         {
-            await _db.Database.EnsureCreatedAsync();
             // Arrange
             sut = new MoamrathRepository(_db);
 
@@ -150,15 +140,15 @@ namespace AstroPanda.Data.Test.RepositortyTests
 
             // Assert
             Assert.False(result);
-            await _db.Database.EnsureDeletedAsync();
         }
 
         [Theory]
         [ClassData(typeof(MoamrathIdsData))]
         public async Task CheckingExistenceOfMultiples_WillReturnTrue_WhenAllExist(params Guid[] ids)
         {
-            await _db.Database.EnsureCreatedAsync();
             // Arrange
+            await _db.Database.EnsureDeletedAsync();
+            await _db.Database.EnsureCreatedAsync();
             sut = new MoamrathRepository(_db);
 
             // Act
@@ -166,14 +156,12 @@ namespace AstroPanda.Data.Test.RepositortyTests
 
             // Assert
             Assert.True(result);
-            await _db.Database.EnsureDeletedAsync();
         }
 
         [Theory]
         [ClassData(typeof(PartialFakeMoamrathIdsData))]
         public async Task CheckingExistenceOfMultiples_WillReturnFalse_WhenAnyNotExist(params Guid[] ids)
         {
-            await _db.Database.EnsureCreatedAsync();
             // Arrange
             sut = new MoamrathRepository(_db);
 
@@ -182,7 +170,6 @@ namespace AstroPanda.Data.Test.RepositortyTests
 
             // Assert
             Assert.False(result);
-            await _db.Database.EnsureDeletedAsync();
         }
 
         [Theory]
@@ -193,7 +180,6 @@ namespace AstroPanda.Data.Test.RepositortyTests
         [InlineData("ABABF0EA-4128-4830-8471-B634585145D9")]
         public async Task GetAsync_WillReturnTheCorrectValue_WhenExists(string id)
         {
-            await _db.Database.EnsureCreatedAsync();
             // Arrange
             sut = new MoamrathRepository(_db);
 
@@ -203,8 +189,6 @@ namespace AstroPanda.Data.Test.RepositortyTests
             // Assert
             Assert.NotNull(result);
             Assert.Equal(Guid.Parse(id), result.Id);
-
-            await _db.Database.EnsureDeletedAsync();
         }
 
         [Theory]
@@ -217,7 +201,6 @@ namespace AstroPanda.Data.Test.RepositortyTests
         [InlineData(7)]
         public async Task GetAsync_WillReturnNull_WhenNotExists(int iteration)
         {
-            await _db.Database.EnsureCreatedAsync();
             // Arrange
             sut = new MoamrathRepository(_db);
 
@@ -226,8 +209,6 @@ namespace AstroPanda.Data.Test.RepositortyTests
 
             // Assert
             Assert.Null(result);
-
-            await _db.Database.EnsureDeletedAsync();
         }
 
         [Theory]
@@ -237,7 +218,6 @@ namespace AstroPanda.Data.Test.RepositortyTests
         [InlineData("155C1269-5D13-4E83-8F0B-34B8B2B5FAE1", "ABABF0EA-4128-4830-8471-B634585145D9")]
         public async Task GetAsyncMultiple_WillReturnOnlyThoseWithMatchingKeys(string id1, string id2)
         {
-            await _db.Database.EnsureCreatedAsync();
             // Arrange
             sut = new MoamrathRepository(_db);
 
@@ -247,15 +227,12 @@ namespace AstroPanda.Data.Test.RepositortyTests
             // Assert
             Assert.NotEmpty(result);
             Assert.Equal(2, result.Count());
-
-            await _db.Database.EnsureDeletedAsync();
         }
 
         [Theory]
         [ClassData(typeof(MoamrathIdsData))]
         public async Task GetAsyncMultiple_WillReturnAllMatchingEntities(params Guid[] ids)
         {
-            await _db.Database.EnsureCreatedAsync();
             // Arrange
             sut = new MoamrathRepository(_db);
 
@@ -264,13 +241,7 @@ namespace AstroPanda.Data.Test.RepositortyTests
 
             // Assert
             Assert.NotEmpty(result);
-            Assert.Equal(ids.Length, result.Count());
-
-            await _db.Database.EnsureDeletedAsync();
+            Assert.Equal(ids.Length, result.Count());           
         }
-
-
-
-
     }
 }

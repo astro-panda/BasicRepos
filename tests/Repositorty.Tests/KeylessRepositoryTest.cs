@@ -2,26 +2,20 @@
 using AstroPanda.Data.Test.Setup;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace AstroPanda.Data.Test.RepositortyTests
 {
-    public class KeylessRepositoryTest
+    public class KeylessRepositoryTest : IClassFixture<DataFixture>
     {
-        private DbContextOptions<TestDbContext> DbOptions;
         private TestDbContext _db;
-
         private KeylessRepository sut;
 
-        public KeylessRepositoryTest()
+        public KeylessRepositoryTest(DataFixture fixture)
         {
-            DbOptions = new DbContextOptionsBuilder<TestDbContext>().UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()).Options;
-            _db = new TestDbContext(DbOptions);
-            _db.Database.EnsureCreated();
+            _db = fixture.Db;
         }
 
         [Fact]
@@ -35,8 +29,6 @@ namespace AstroPanda.Data.Test.RepositortyTests
         public void QueryWithPredicate_ReturnsTypedIQueryable()
         {
             // Arrange
-            _db.Database.EnsureDeleted();
-            _db.Database.EnsureCreated();
             sut = new KeylessRepository(_db);
 
             // Act
@@ -50,8 +42,6 @@ namespace AstroPanda.Data.Test.RepositortyTests
         public void QueryWithPredicate_WithNullExpress_ReturnsTypedIQueryable()
         {
             // Arrange
-            _db.Database.EnsureDeleted();
-            _db.Database.EnsureCreated();
             sut = new KeylessRepository(_db);
 
             // Act
@@ -65,8 +55,6 @@ namespace AstroPanda.Data.Test.RepositortyTests
         public void Query_WithGenericParameter_ReturnsGenericallyTypedIQueryable()
         {
             // Arrange
-            _db.Database.EnsureDeleted();
-            _db.Database.EnsureCreated();
             sut = new KeylessRepository(_db);
 
             // Act
@@ -98,8 +86,8 @@ namespace AstroPanda.Data.Test.RepositortyTests
         public async Task GetAsync_WithApplicableQueryReturns_AValue(string broName)
         {
             // Arrange
-            await _db.Database.EnsureDeletedAsync();
-            await _db.Database.EnsureCreatedAsync();
+      
+      
             sut = new KeylessRepository(_db);
 
             // Act
@@ -113,8 +101,8 @@ namespace AstroPanda.Data.Test.RepositortyTests
         public async Task GetAllAsync_ReturnsAllExistingValues()
         {
             // Arrange
-            await _db.Database.EnsureDeletedAsync();
-            await _db.Database.EnsureCreatedAsync();
+      
+      
             sut = new KeylessRepository(_db);
 
             // Act
@@ -132,8 +120,8 @@ namespace AstroPanda.Data.Test.RepositortyTests
         public async Task GetAllAsync_WithPredicate_ReturnsMatchingValues(int id1, int id2, int id3)
         {
             // Arrange
-            await _db.Database.EnsureDeletedAsync();
-            await _db.Database.EnsureCreatedAsync();
+      
+      
             sut = new KeylessRepository(_db);
 
             // Act
@@ -153,8 +141,8 @@ namespace AstroPanda.Data.Test.RepositortyTests
         public async Task Exists_WithPredicate_ReturnsTrue_IfExists(string name)
         {
             // Arrange
-            await _db.Database.EnsureDeletedAsync();
-            await _db.Database.EnsureCreatedAsync();
+      
+      
             sut = new KeylessRepository(_db);
 
             // Act
@@ -174,8 +162,8 @@ namespace AstroPanda.Data.Test.RepositortyTests
         public async Task Exists_WithPredicate_ReturnsFalse_IfNotExists(string name)
         {
             // Arrange
-            await _db.Database.EnsureDeletedAsync();
-            await _db.Database.EnsureCreatedAsync();
+      
+      
             sut = new KeylessRepository(_db);
 
             // Act
@@ -190,8 +178,8 @@ namespace AstroPanda.Data.Test.RepositortyTests
         {
             // Arrange
             Trillig toAdd = new Trillig() { Name = "F", BrotherName = "No Brother" };
-            await _db.Database.EnsureDeletedAsync();
-            await _db.Database.EnsureCreatedAsync();
+      
+      
             sut = new KeylessRepository(_db);
 
             // Act
@@ -207,8 +195,8 @@ namespace AstroPanda.Data.Test.RepositortyTests
         public async Task AddAsync_DoesNothing_When_objects_areNull()
         {
             // Arrange   
-            await _db.Database.EnsureDeletedAsync();
-            await _db.Database.EnsureCreatedAsync();
+      
+      
             sut = new KeylessRepository(_db);
 
             // Act
@@ -225,8 +213,8 @@ namespace AstroPanda.Data.Test.RepositortyTests
         public async Task AddAsync_DoesNothing_When_objects_areEmpty()
         {
             // Arrange   
-            await _db.Database.EnsureDeletedAsync();
-            await _db.Database.EnsureCreatedAsync();
+      
+      
             sut = new KeylessRepository(_db);
 
             // Act
@@ -238,21 +226,49 @@ namespace AstroPanda.Data.Test.RepositortyTests
             Assert.False(result);
         }
 
-        [Fact]
-        public async Task DeleteAsync_Params_RemovesExistingObjects_FromStore()
-        {
-            await _db.Database.EnsureDeletedAsync();
-            await _db.Database.EnsureCreatedAsync();
-            Assert.True(false);
-        }
+        //[Fact]
+        //public async Task DeleteAsync_Params_RemovesExistingObjects_FromStore()
+        //{
+        //    // Arrange
+        //    await _db.Database.EnsureDeletedAsync();
+        //    await _db.Database.EnsureCreatedAsync();
+        //    sut = new KeylessRepository(_db);
 
-        [Fact]
-        public async Task DeleteAsync_Params_DoesNothingWith_NonExistentEntities()
-        {
-            await _db.Database.EnsureDeletedAsync();
-            await _db.Database.EnsureCreatedAsync();
-            Assert.True(false);
-        }
+        //    var remove1 = await _db.Trilligs.FindAsync(1);
+        //    var remove2 = await _db.Trilligs.FindAsync(2);
+        //    ICollection<int> removedIds = new List<int>() { 1, 2 };
+
+        //    bool existenceVAlidation = await _db.Trilligs.AnyAsync(x => removedIds.Contains(x.Id));
+
+        //    Assert.True(existenceVAlidation);
+
+        //    // Act
+        //    await sut.DeleteAsync(remove1, remove2);
+
+        //    // Assert
+        //    bool result = await _db.Trilligs.AnyAsync(x => removedIds.Contains(x.Id));
+
+        //    Assert.False(result);
+        ////}
+
+        //[Fact]
+        //public async Task DeleteAsync_Params_DoesNothingWith_NonExistentEntities()
+        //{
+        //    // Arrange      
+        //    await _db.Database.EnsureDeletedAsync();
+        //    await _db.Database.EnsureCreatedAsync();
+        //    sut = new KeylessRepository(_db);
+
+        //    var count = await _db.Trilligs.ToListAsync();
+        //    Assert.Equal(5, count.Count);
+
+        //    // Act
+        //    await sut.DeleteAsync();
+
+        //    // Assert
+        //    var postCount = await _db.Trilligs.ToListAsync();
+        //    Assert.Equal(count.Count, postCount.Count);
+        //}
 
         [Fact]
         public async Task DeleteAsync_Params_DoesNothing_WhenEmpty()
@@ -292,7 +308,15 @@ namespace AstroPanda.Data.Test.RepositortyTests
         {
             await _db.Database.EnsureDeletedAsync();
             await _db.Database.EnsureCreatedAsync();
-            Assert.True(false);
+            sut = new KeylessRepository(_db);
+
+            Trillig toREmove = await sut.GetAsync(x => x.Id == 1);
+
+            await sut.DeleteAsync(toREmove);
+
+            bool stillExists = await sut.Exists(x => x.Id == 1);
+
+            Assert.False(stillExists);
         }
 
         [Fact]

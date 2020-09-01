@@ -18,7 +18,7 @@ namespace AstroPanda.Data.Test.RepositortyTests
 
         public IntKeyedRepositoryTest()
         {
-            DbOptions = new DbContextOptionsBuilder<TestDbContext>().UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()).Options;
+            DbOptions = new DbContextOptionsBuilder<TestDbContext>().UseInMemoryDatabase(databaseName: "Int").Options;
 
             _db = new TestDbContext(DbOptions);            
         }
