@@ -10,10 +10,12 @@ steps:
 - template: pipeline-template.yml
 
 - task: DotNetCoreCLI@2
+  inputs:
     command: publish
     arguments: '-o $(Build.ArtifactStagingDirectory)'
 
 - task: DotNetCoreCLI@2
+  inputs:
     command: push
     searchPatternPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
     feedPublish: 'AstroPanda'
