@@ -16,4 +16,4 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: test
-    projects: '../AstroPanda.sln'
+    projects: '../AstroPanda.sln' 
