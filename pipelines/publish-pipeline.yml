@@ -10,9 +10,9 @@ steps:
 - template: pipelines-template.yml
 
 - task: DotNetCoreCLI@2
-  displayName: 'publish package'
+  displayName: 'create NuGet package'
   inputs:
-    command: publish
+    command: pack
     projects: '**/AstroPanda.Data.csproj'
     arguments: '-o $(Build.ArtifactStagingDirectory)'
 
