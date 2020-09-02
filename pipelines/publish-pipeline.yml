@@ -1,3 +1,8 @@
+name: 'AstroPanda.Data Publish'
+
+trigger: 
+- master
+
 steps:
   - template: pipeline-template.yml
 
