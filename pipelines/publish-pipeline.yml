@@ -3,6 +3,9 @@ name: 'AstroPanda.Data Publish'
 trigger: 
 - master
 
+pool:
+  vmImage: 'ubuntu-latest'
+
 steps:
   - template: pipeline-template.yml
 
