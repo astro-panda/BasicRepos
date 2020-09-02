@@ -4,11 +4,13 @@ steps:
     version: '3.1.x'    
 
 - task: DotNetCoreCLI@2
+  displayName: '.NET Core Build'
   inputs:
     command: build
-    projects: '../AstroPanda.sln'
+    projects: '**/*.csproj'
 
 - task: DotNetCoreCLI@2
+  displayName: 'Run Unit Tests'
   inputs:
     command: test
-    projects: '../AstroPanda.sln' 
+    projects: '**/*.Test.csproj' 
