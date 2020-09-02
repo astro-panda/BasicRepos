@@ -10,11 +10,11 @@ steps:
   - template: pipeline-template.yml
 
   - task: DotNetCoreCLI@2
-    command: 'pack'
+    command: pack
     outputDir: '$(Build.ArtifactStagingDirectory)'
 
   - task: DotNetCoreCLI@2
-    command: 'push'
+    command: push
     searchPatternPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
     feedPublish: 'AstroPanda'
 
