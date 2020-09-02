@@ -4,15 +4,14 @@ pool:
 steps:
 - task: UseDotNet@2
   inputs:
-    version: '3.0.x'
-    packageType: runtime
+    version: '3.1.x'
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'build'
-    projects: ../AstroPanda.sln
+    projects: '../AstroPanda.sln'
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'test'
-    projects: ../AstroPanda.sln
+    projects: '../AstroPanda.sln'
