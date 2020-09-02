@@ -7,7 +7,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- template: pipeline-template.yml
+- template: pipelines-template.yml
 
 - task: DotNetCoreCLI@2
   inputs:
