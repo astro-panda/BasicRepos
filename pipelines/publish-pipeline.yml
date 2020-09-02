@@ -7,14 +7,14 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-  - template: pipeline-template.yml
+- template: pipeline-template.yml
 
-  - task: DotNetCoreCLI@2
-    command: pack
-    outputDir: '$(Build.ArtifactStagingDirectory)'
+- task: DotNetCoreCLI@2
+  command: pack
+  outputDir: '$(Build.ArtifactStagingDirectory)'
 
-  - task: DotNetCoreCLI@2
-    command: push
-    searchPatternPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
-    feedPublish: 'AstroPanda'
+- task: DotNetCoreCLI@2
+  command: push
+  searchPatternPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+  feedPublish: 'AstroPanda'
 
