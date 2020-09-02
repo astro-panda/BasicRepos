@@ -13,10 +13,11 @@ steps:
   displayName: 'publish package'
   inputs:
     command: publish
-    projects: '**/*/AstroPanda.Data.csproj'
+    projects: '**/AstroPanda.Data.csproj'
     arguments: '-o $(Build.ArtifactStagingDirectory)'
 
 - task: DotNetCoreCLI@2
+  displayName: 'Push package to Astro Panda NuGet'
   inputs:
     command: push
     searchPatternPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'

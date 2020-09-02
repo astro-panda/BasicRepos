@@ -1,8 +1,4 @@
 steps:
-- task: UseDotNet@2
-  inputs:
-    version: '3.1.x'    
-
 - task: DotNetCoreCLI@2
   displayName: '.NET Core Build'
   inputs:
