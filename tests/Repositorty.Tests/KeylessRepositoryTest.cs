@@ -224,7 +224,7 @@ namespace AstroPanda.Data.Test.RepositortyTests
             await sut.AddAsync(new Trillig[] { });
 
             // Assert
-            bool result = _db.Trilligs.Any(x => x.Name == "F");
+            bool result = _db.Trilligs.Any(x => x.Name == "Z");
 
             Assert.False(result);
         }
