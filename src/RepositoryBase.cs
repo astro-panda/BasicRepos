@@ -136,7 +136,12 @@ namespace AstroPanda.Data
             }
             else
             {
-                Entities.Remove(objects.FirstOrDefault());
+                T entity = objects.FirstOrDefault();
+
+                if (entity == null)
+                    return Task.CompletedTask;
+
+                Entities.Remove(entity);
             }
             return Db.SaveChangesAsync();
         }
