@@ -60,5 +60,13 @@ namespace AstroPanda.Data.Interfaces
         /// <param name="predicate">An expression of the matching criteria</param>
         /// <returns>An instance of <see cref="T"/> if it exists, otherwise default</returns>
         Task<T> GetAsync(Expression<Func<T, bool>> predicate);
+
+        /// <summary>
+        /// Takes an expression describing the type of entities that should exist and 
+        /// evaluates if any entities meet the given criteria.
+        /// </summary>
+        /// <param name="predicate">An expression of the evaluation criteria</param>
+        /// <returns><c>true</c> if any entity matches the criteria, otherwise <c>false</c></returns>
+        Task<bool> Exists(Expression<Func<T, bool>> predicate);
     }
 }

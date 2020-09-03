@@ -42,13 +42,5 @@ namespace AstroPanda.Data
         /// <param name="objects">The entities to be removed</param>
         /// <returns>A <see cref="Task"/> representing the work of deleting</returns>
         Task DeleteAsync(IEnumerable<T> objects);
-
-        /// <summary>
-        /// Takes an expression describing the type of entities that should exist and 
-        /// evaluates if any entities meet the given criteria.
-        /// </summary>
-        /// <param name="predicate">An expression of the evaluation criteria</param>
-        /// <returns><c>true</c> if any entity matches the criteria, otherwise <c>false</c></returns>
-        Task<bool> Exists(Expression<Func<T, bool>> predicate);
     }
 }
