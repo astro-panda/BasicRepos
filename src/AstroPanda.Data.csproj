@@ -7,6 +7,7 @@
     <Version>1.0.1</Version>
     <Authors>Turner Bass</Authors>
     <Company>Astro Panda Studios</Company>
+    <Copyright />
   </PropertyGroup>
 
   <ItemGroup>
