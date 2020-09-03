@@ -4,11 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AstroPanda.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace AstroPanda.Data 
 {
-    public abstract class KeyedRepositoryBase<T, TKey> : RepositoryBase<T>, IKeyedRepository<T, TKey>
+    public abstract class KeyedRepositoryBase<T, TKey> : RepositoryBase<T>, IKeyedRepository<T, TKey>, IKeyedReadRepository<T, TKey>
         where T : class, IKeyedEntity<TKey>
         where TKey : IEquatable<TKey>
     {

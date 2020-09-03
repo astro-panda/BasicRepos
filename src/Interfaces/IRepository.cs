@@ -12,7 +12,7 @@ namespace AstroPanda.Data
     /// <see cref="IRepository{T}"/> to all of its derived repositories
     /// </summary>
     /// <typeparam name="T">The <see cref="Type"/> of entity this repository operates with</typeparam>    
-    public interface IRepository<T> : IReadRepository<T>
+    public interface IRepository<T> 
         where T : class 
     {
         /// <summary>

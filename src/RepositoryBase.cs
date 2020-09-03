@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using AstroPanda.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace AstroPanda.Data
@@ -13,7 +14,7 @@ namespace AstroPanda.Data
     /// <see cref="IRepository{T}"/> to all of its derived repositories
     /// </summary>
     /// <typeparam name="T">The <see cref="Type"/> of entity this repository operates with</typeparam>    
-    public abstract class RepositoryBase<T> : IRepository<T>
+    public abstract class RepositoryBase<T> : IRepository<T>, IReadRepository<T>
             where T : class
     {
         /// <summary>
