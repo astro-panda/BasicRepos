@@ -16,7 +16,7 @@ steps:
     projects: '**/BasicRepos.csproj'
     arguments: '-o $(Build.ArtifactStagingDirectory)'
 
-- task: PublishBuildArtifacts@2
+- task: PublishBuildArtifacts@1
   displayName: 'Publish Build Artifacts'
   inputs:
     pathToPublish: '$(Build.ArtifactStagingDirectory)' 
