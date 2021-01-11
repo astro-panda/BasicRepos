@@ -35,6 +35,8 @@ namespace BasicRepos.Test.RepositortyTests
         public async Task DeletingEntitiesByKey_RemoveEntriesWithExisitngKeys()
         {
             // Arrange
+            await _db.Database.EnsureDeletedAsync();
+            await _db.Database.EnsureCreatedAsync();
             var targetIds = new[]
             {
                 Guid.Parse("EFED4F70-8B1A-4BB3-B14B-B6EA2EEE2267"),

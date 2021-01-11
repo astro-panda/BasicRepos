@@ -1,6 +1,6 @@
 name: 'BasicRepos Publish'
 
-trigger: 
+trigger:
 - main
 
 pool:
