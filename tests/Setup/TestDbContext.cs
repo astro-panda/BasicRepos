@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 
-namespace AstroPanda.Data.Test.Setup
+namespace BasicRepos.Test.Setup
 {
     public class TestDbContext : DbContext
     {

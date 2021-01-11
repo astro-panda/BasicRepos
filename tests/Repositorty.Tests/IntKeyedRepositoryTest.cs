@@ -1,5 +1,5 @@
-﻿using AstroPanda.Data.Test.Repositories;
-using AstroPanda.Data.Test.Setup;
+﻿using BasicRepos.Test.Repositories;
+using BasicRepos.Test.Setup;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace AstroPanda.Data.Test.RepositortyTests
+namespace BasicRepos.Test.RepositortyTests
 {
     public class IntKeyedRepositoryTest
     {

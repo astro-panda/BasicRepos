@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AstroPanda.Data.Test.Setup
+namespace BasicRepos.Test.Setup
 {
     public class Brillig : IKeyedEntity<string>
     {

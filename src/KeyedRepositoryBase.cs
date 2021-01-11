@@ -4,10 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AstroPanda.Data.Interfaces;
+using BasicRepos.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace AstroPanda.Data 
+namespace BasicRepos 
 {
     public abstract class KeyedRepositoryBase<T, TKey> : RepositoryBase<T>, IKeyedRepository<T, TKey>, IKeyedReadRepository<T, TKey>
         where T : class, IKeyedEntity<TKey>

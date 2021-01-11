@@ -1,4 +1,4 @@
-﻿namespace AstroPanda.Data.Test.Setup
+﻿namespace BasicRepos.Test.Setup
 {
     public class SuperTrillig : Trillig
     {   

@@ -1,11 +1,11 @@
-using AstroPanda.Data.Interfaces;
+using BasicRepos.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace AstroPanda.Data
+namespace BasicRepos
 {
     /// <summary>
     /// Base level repository to supply most generic implementation of state changing commands of an 

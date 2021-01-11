@@ -1,5 +1,5 @@
-﻿using AstroPanda.Data.Test.Repositories;
-using AstroPanda.Data.Test.Setup;
+﻿using BasicRepos.Test.Repositories;
+using BasicRepos.Test.Setup;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using System;
@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace AstroPanda.Data.Test.RepositortyTests
+namespace BasicRepos.Test.RepositortyTests
 {
     public class KeylessRepositoryTest : IClassFixture<DataFixture>
     {

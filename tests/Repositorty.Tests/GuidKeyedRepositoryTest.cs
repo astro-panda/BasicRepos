@@ -1,5 +1,5 @@
-﻿using AstroPanda.Data.Test.Repositories;
-using AstroPanda.Data.Test.Setup;
+﻿using BasicRepos.Test.Repositories;
+using BasicRepos.Test.Setup;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Xunit;
 using Xunit.Extensions;
 
-namespace AstroPanda.Data.Test.RepositortyTests
+namespace BasicRepos.Test.RepositortyTests
 {
     public class GuidKeyedRepositoryTest : IClassFixture<DataFixture>
     {        

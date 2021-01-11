@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AstroPanda.Data.Test.Setup
+namespace BasicRepos.Test.Setup
 {
     public class MoamrathIdsData : IEnumerable<object[]>
     {

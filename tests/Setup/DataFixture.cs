@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace AstroPanda.Data.Test.Setup
+namespace BasicRepos.Test.Setup
 {
     public class DataFixture : IDisposable
     {

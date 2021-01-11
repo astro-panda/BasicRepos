@@ -1,6 +1,6 @@
-﻿using AstroPanda.Data.Test.Setup;
+﻿using BasicRepos.Test.Setup;
 
-namespace AstroPanda.Data.Test.Repositories
+namespace BasicRepos.Test.Repositories
 {
     public class KeylessRepository : RepositoryBase<Trillig>
     {

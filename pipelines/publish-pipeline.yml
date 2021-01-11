@@ -1,4 +1,4 @@
-name: 'AstroPanda.Data Publish'
+name: 'BasicRepos Publish'
 
 trigger: 
 - master
@@ -13,7 +13,7 @@ steps:
   displayName: 'create NuGet package'
   inputs:
     command: pack
-    projects: '**/AstroPanda.Data.csproj'
+    projects: '**/BasicRepos.csproj'
     arguments: '-o $(Build.ArtifactStagingDirectory)'
 
 - task: DotNetCoreCLI@2

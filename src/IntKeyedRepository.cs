@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 
-namespace AstroPanda.Data
+namespace BasicRepos
 {
     public class IntKeyedRepository<T> : KeyedRepositoryBase<T, int> where T : class, IKeyedEntity<int>
     {

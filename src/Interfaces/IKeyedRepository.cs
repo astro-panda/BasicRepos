@@ -1,10 +1,10 @@
 
-using AstroPanda.Data.Interfaces;
+using BasicRepos.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace AstroPanda.Data
+namespace BasicRepos
 {
     public interface IKeyedRepository<T, TKey> : IRepository<T>
         where T : class, IKeyedEntity<TKey>

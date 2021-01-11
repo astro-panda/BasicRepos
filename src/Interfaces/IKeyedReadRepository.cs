@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AstroPanda.Data.Interfaces
+namespace BasicRepos.Interfaces
 {
     /// <summary>
     /// A read-only key based repository

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace AstroPanda.Data.Test
+namespace BasicRepos.Test
 {
     public class Moamrath : IKeyedEntity<Guid>
     {
