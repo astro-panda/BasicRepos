@@ -1,0 +1,10 @@
+name: 'BasicRepos PR Validation'
+
+pr:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- template: pipelines-template.yml
