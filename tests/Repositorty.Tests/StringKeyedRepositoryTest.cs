@@ -55,6 +55,8 @@ namespace BasicRepos.Test.RepositortyTests
         public async Task DeletingEntitiesByKey_WillNotAffectNonExistentKeys()
         {
             // Arrange
+            await _db.Database.EnsureDeletedAsync();
+            await _db.Database.EnsureCreatedAsync();
             var targetIds = new[] { "2", "22", "33" };
             var preBrilligs = _db.Brilligs.Where(x => targetIds.Contains(x.Id)).ToArray();
             Assert.Single(preBrilligs);
