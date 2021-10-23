@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BasicRepos.Interfaces
+namespace BasicRepos
 {
     /// <summary>
     /// A Repository only able to read and query the underlying entities
