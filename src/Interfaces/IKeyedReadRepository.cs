@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BasicRepos.Interfaces
+namespace BasicRepos
 {
     /// <summary>
     /// A read-only key based repository
