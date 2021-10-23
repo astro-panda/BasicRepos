@@ -151,6 +151,10 @@ namespace BasicRepos
         /// </summary>
         /// <param name="objects">The entities to be updated</param>
         /// <returns>A <see cref="Task"/> representing the work of updating and saving the entities</returns>
-        public virtual Task UpdateAsync(params T[] objects) => Db.SaveChangesAsync();
+        public virtual Task UpdateAsync(params T[] objects)
+        {
+            Entities.UpdateRange(objects);
+            return Db.SaveChangesAsync();
+        }
     }
 }
