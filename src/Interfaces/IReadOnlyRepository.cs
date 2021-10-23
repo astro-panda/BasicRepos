@@ -11,7 +11,7 @@ namespace BasicRepos.Interfaces
     /// A Repository only able to read and query the underlying entities
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface IReadRepository<T> where T : class
+    public interface IReadOnlyRepository<T> where T : class
     {
         /// <summary>
         /// Allows for the internal entities to be queried with any type specifications
