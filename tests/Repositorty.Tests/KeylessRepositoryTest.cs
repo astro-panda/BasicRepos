@@ -3,6 +3,7 @@ using BasicRepos.Test.Setup;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
@@ -338,7 +339,9 @@ namespace BasicRepos.Test.RepositortyTests
         {
             // Arrange
             var mockDb = new Mock<TestDbContext>();
+            var mockSet = new Mock<DbSet<Trillig>>();
             mockDb.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
+            mockDb.Setup(x => x.Set<Trillig>()).Returns(mockSet.Object);
             _db = mockDb.Object;
             sut = new KeylessRepository(_db);
 
@@ -346,6 +349,7 @@ namespace BasicRepos.Test.RepositortyTests
             await sut.UpdateAsync();
 
             mockDb.Verify(x => x.SaveChangesAsync(default), Times.Once());
+            mockSet.Verify(x => x.UpdateRange(It.IsAny<Trillig[]>()), Times.Once);
         }
     }
 }
