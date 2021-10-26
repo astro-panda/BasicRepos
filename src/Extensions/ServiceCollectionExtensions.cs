@@ -50,7 +50,7 @@ namespace BasicRepos
                         if(idProp != null)
                         {
                             services.TryAddTransient(writeKeyedRepo.MakeGenericType(concreteEntityType), defaultRepo.MakeGenericType(concreteEntityType, idProp.PropertyType, dbContextType));
-                            services.TryAddTransient(writeKeyedRepo.MakeGenericType(concreteEntityType), defaultRepo.MakeGenericType(concreteEntityType, idProp.PropertyType, dbContextType));
+                            services.TryAddTransient(writeKeyedRepo.MakeGenericType(concreteEntityType), defaultKeyedRepo.MakeGenericType(concreteEntityType, idProp.PropertyType, dbContextType));
                         }
                     }
                 }
