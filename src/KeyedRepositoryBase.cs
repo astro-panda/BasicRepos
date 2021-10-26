@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BasicRepos
 {
-    public abstract class KeyedRepositoryBase<T, TKey> : RepositoryBase<T>, IKeyedRepository<T, TKey>, IKeyedReadRepository<T, TKey>
+    public abstract class KeyedRepositoryBase<T, TKey> : RepositoryBase<T>, IKeyedRepository<T, TKey>, IKeyedReadOnlyRepository<T, TKey>
         where T : class, IKeyedEntity<TKey>
         where TKey : IEquatable<TKey>
     {

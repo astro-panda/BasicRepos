@@ -11,7 +11,7 @@ namespace BasicRepos
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="TKey"></typeparam>
-    public interface IKeyedReadRepository<T, TKey>
+    public interface IKeyedReadOnlyRepository<T, TKey>
         where T : class, IKeyedEntity<TKey>
         where TKey : IEquatable<TKey>
     {
