@@ -7,12 +7,17 @@ namespace BasicRepos.Test.Setup
 {
     public class TestDbContext : DbContext
     {
-        public TestDbContext() : this(new DbContextOptions<TestDbContext>())
+        public TestDbContext() : this(new DbContextOptionsBuilder<TestDbContext>())
         {
 
         }
 
         public TestDbContext(DbContextOptions<TestDbContext> options) : base(options)
+        {
+
+        }
+
+        public TestDbContext(DbContextOptionsBuilder<TestDbContext> builder) : this(builder.Options)
         {
 
         }
@@ -52,6 +57,5 @@ namespace BasicRepos.Test.Setup
                 new Moamrath() { Id = Guid.Parse("ABABF0EA-4128-4830-8471-B634585145D9"), Sound = "In quantum mechanics, the uncertainty principle (also known as Heisenberg's uncertainty principle) is any of a variety of mathematical inequalities[1] asserting a fundamental limit to the precision with which the values for certain pairs of physical quantities of a particle, such as position, x, and momentum, p, can be predicted from initial conditions", Legs = 40 }
             });
         }
-
     }
 }

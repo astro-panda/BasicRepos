@@ -10,50 +10,72 @@ namespace BasicRepos
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddBasicRepos(this IServiceCollection services, params DbContext[] dbContexts)
+        public static IServiceCollection AddBasicRepos<TContext>(this IServiceCollection services) where TContext : DbContext, new()
         {
-            return BindBasicRepos(services, dbContexts);
+            return ScaffoldBasicRepos<TContext>(services);
         }
 
-        internal static IServiceCollection BindBasicRepos(IServiceCollection services, DbContext[] dbContexts)
+        public static IServiceCollection ScaffoldBasicRepos<TContext>(IServiceCollection services) where TContext : DbContext, new()
         {
-            Dictionary<DbContext, IEnumerable<Type>> entityTypeDictionary = new Dictionary<DbContext, IEnumerable<Type>>();
+            var serviceProvider = services.BuildServiceProvider();
+            TContext dbContext = serviceProvider.GetRequiredService<TContext>();
+            Type dbContextType = dbContext.GetType();
 
+            IEnumerable<Type> entityTypes = dbContext.Model.GetEntityTypes().Select(x => x.ClrType.GetTypeInfo());
+
+            BindBasicRepos(services, dbContextType, entityTypes);
+            BindKeyedBasicRepos(services, dbContextType, entityTypes);
+
+            return services;
+        }
+
+        private static IServiceCollection BindBasicRepos(IServiceCollection services, Type dbContextType, IEnumerable<Type> entityTypes)
+        {
             Type writeRepo = typeof(IRepository<>);
             Type readRepo = typeof(IReadOnlyRepository<>);
-            Type writeKeyedRepo = typeof(IKeyedRepository<,>);
-            Type readKeyedRepo = typeof(IKeyedReadOnlyRepository<,>);
-            Type defaultRepo = typeof(DefaultRepository<,>);
-            Type defaultKeyedRepo = typeof(DefaultKeyedRepository<,,>);
+            Type defaultRepo = typeof(DefaultRepository<,>);            
 
-            foreach (var dbContext in dbContexts)
+            foreach (var entityType in entityTypes)
             {
-                var types = dbContext.Model.GetEntityTypes();
-                entityTypeDictionary.Add(dbContext, types.Select(x => x.ClrType));
+                services.TryAddTransient(writeRepo.MakeGenericType(entityType),
+                                         defaultRepo.MakeGenericType(entityType, dbContextType));
+
+                services.TryAddTransient(readRepo.MakeGenericType(entityType),
+                                         defaultRepo.MakeGenericType(entityType, dbContextType));
             }
 
-            foreach(var entitymap in entityTypeDictionary)
+            return services;
+        }
+
+        private static IServiceCollection BindKeyedBasicRepos(IServiceCollection services, Type dbContextType, IEnumerable<Type> entityTypes)
+        {
+            Type writeKeyedRepo = typeof(IKeyedRepository<,>);
+            Type readKeyedRepo = typeof(IKeyedReadOnlyRepository<,>);
+            Type defaultKeyedRepo = typeof(DefaultKeyedRepository<,,>);
+
+            Dictionary<Type, Type> typeMap = new Dictionary<Type, Type>();
+
+            foreach(var x in entityTypes)
             {
-                Type dbContextType = entitymap.Key.GetType();
+                PropertyInfo[] props = x.GetProperties();
+                PropertyInfo idProp = props.Where(x => x.Name == "Id").FirstOrDefault();
+                var interfaces = x.GetInterfaces().Where(x => x.IsGenericType);
 
-                foreach (var entityType in entitymap.Value)
-                {
-                    Type concreteEntityType = entityType.GetType();
-                    services.TryAddTransient(writeRepo.MakeGenericType(concreteEntityType), defaultRepo.MakeGenericType(concreteEntityType, dbContextType));
-                    services.TryAddTransient(readRepo.MakeGenericType(concreteEntityType), defaultRepo.MakeGenericType(concreteEntityType, dbContextType));
+                if (idProp is null)
+                    continue;
 
-                    if(concreteEntityType.IsAssignableFrom(typeof(IKeyedEntity<>)))
-                    {
-                        PropertyInfo[] props = concreteEntityType.GetTypeInfo().GetProperties(BindingFlags.Public);
-                        PropertyInfo idProp = props.Where(x => x.Name == "Id").FirstOrDefault();
+                if(interfaces.Any(x => x.GetGenericArguments().Contains(idProp.PropertyType)))                
+                    typeMap.Add(x, idProp.PropertyType);                
+            }
 
-                        if(idProp != null)
-                        {
-                            services.TryAddTransient(writeKeyedRepo.MakeGenericType(concreteEntityType), defaultRepo.MakeGenericType(concreteEntityType, idProp.PropertyType, dbContextType));
-                            services.TryAddTransient(writeKeyedRepo.MakeGenericType(concreteEntityType), defaultKeyedRepo.MakeGenericType(concreteEntityType, idProp.PropertyType, dbContextType));
-                        }
-                    }
-                }
+
+            foreach (var keyedEntity in typeMap)
+            {
+                services.TryAddTransient(writeKeyedRepo.MakeGenericType(keyedEntity.Key, keyedEntity.Value),
+                                        defaultKeyedRepo.MakeGenericType(keyedEntity.Key, keyedEntity.Value, dbContextType));
+
+                services.TryAddTransient(readKeyedRepo.MakeGenericType(keyedEntity.Key, keyedEntity.Value),
+                                        defaultKeyedRepo.MakeGenericType(keyedEntity.Key, keyedEntity.Value, dbContextType));
             }
 
             return services;
