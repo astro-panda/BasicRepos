@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace BasicRepos
@@ -20,10 +21,10 @@ namespace BasicRepos
         /// </summary>
         /// <param name="ids"></param>
         /// <returns></returns>
-        public virtual async Task DeleteAsync(params TKey[] ids)
+        public virtual async Task DeleteAsync(IEnumerable<TKey> ids, CancellationToken cancellationToken = default)
         {
             var items = await GetAllAsync(x => ids.Contains(x.Id));
-            await DeleteAsync(items);
+            await DeleteAsync(items, cancellationToken);
         }
 
         /// <summary>

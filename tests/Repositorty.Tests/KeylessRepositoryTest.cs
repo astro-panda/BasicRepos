@@ -187,7 +187,7 @@ namespace BasicRepos.Test.RepositortyTests
             sut = new KeylessRepository(_db);
 
             // Act
-            await sut.AddAsync(toAdd);
+            await sut.AddAsync(new[] { toAdd });
 
             // Assert
             bool result = _db.Trilligs.Any(x => x.Name == "F");
@@ -327,7 +327,7 @@ namespace BasicRepos.Test.RepositortyTests
             _db = mockDb.Object;
             sut = new KeylessRepository(_db);            
 
-            await sut.DeleteAsync(new Trillig() { Id = id });
+            await sut.DeleteAsync(new [] { new Trillig() { Id = id } });
 
             bool stillExists = trilligList.Any(x => x.Id == id);
 
@@ -346,10 +346,10 @@ namespace BasicRepos.Test.RepositortyTests
             sut = new KeylessRepository(_db);
 
             // Act
-            await sut.UpdateAsync();
+            await sut.UpdateAsync(Array.Empty<Trillig>());
 
-            mockDb.Verify(x => x.SaveChangesAsync(default), Times.Once());
-            mockSet.Verify(x => x.UpdateRange(It.IsAny<Trillig[]>()), Times.Once);
+            mockDb.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once());
+            mockSet.Verify(x => x.UpdateRange(It.IsAny<IEnumerable<Trillig>>()), Times.Once);
         }
     }
 }

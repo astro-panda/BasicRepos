@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace BasicRepos
@@ -17,27 +18,20 @@ namespace BasicRepos
         /// </summary>
         /// <param name="objects">The entities to be added</param>
         /// <returns></returns>
-        Task AddAsync(params T[] objects);
+        Task AddAsync(IEnumerable<T> objects, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Updates one or more entities and commites those updates
         /// </summary>
         /// <param name="objects">The entities to be updated</param>
         /// <returns>A <see cref="Task"/> representing the work of updating and saving the entities</returns>
-        Task UpdateAsync(params T[] objects);
+        Task UpdateAsync(IEnumerable<T> objects, CancellationToken cancellationToken = default);
         
         /// <summary>
         /// Takes a set of entities and removes them from the <see cref="DbContext"/>
         /// </summary>
         /// <param name="objects">The entities to be removed</param>
         /// <returns>A <see cref="Task"/> representing the work of deleting</returns>
-        Task DeleteAsync(params T[] objects);
-
-        /// <summary>
-        /// Takes a set of entities and removes them from the <see cref="DbContext"/>
-        /// </summary>
-        /// <param name="objects">The entities to be removed</param>
-        /// <returns>A <see cref="Task"/> representing the work of deleting</returns>
-        Task DeleteAsync(IEnumerable<T> objects);
+        Task DeleteAsync(IEnumerable<T> objects, CancellationToken cancellationToken = default);
     }
 }

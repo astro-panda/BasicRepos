@@ -79,7 +79,7 @@ namespace BasicRepos.Test.RepositortyTests
             var preBrilligs = await _db.Brilligs.CountAsync();
 
             // Act
-            await sut.DeleteAsync();
+            await sut.DeleteAsync(Array.Empty<string>());
 
             // Assert
             var postBrilligs = await _db.Brilligs.CountAsync();

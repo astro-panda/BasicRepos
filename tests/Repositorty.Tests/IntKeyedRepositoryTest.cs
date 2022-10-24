@@ -83,7 +83,7 @@ namespace BasicRepos.Test.RepositortyTests
             var preTrilligs = await _db.Trilligs.CountAsync();
 
             // Act
-            await sut.DeleteAsync();
+            await sut.DeleteAsync(Array.Empty<int>());
 
             // Assert
             var postTrilligs = await _db.Trilligs.CountAsync();

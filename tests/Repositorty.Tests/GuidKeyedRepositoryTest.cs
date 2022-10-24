@@ -86,7 +86,7 @@ namespace BasicRepos.Test.RepositortyTests
             var preMoamraths = await _db.Moamraths.CountAsync();
 
             // Act
-            await sut.DeleteAsync();
+            await sut.DeleteAsync(Array.Empty<Guid>());
 
             // Assert
             var postMoamraths = await _db.Moamraths.CountAsync();

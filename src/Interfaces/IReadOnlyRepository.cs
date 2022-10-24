@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace BasicRepos
@@ -46,12 +47,12 @@ namespace BasicRepos
         /// you take care when using this method
         /// </remarks>
         /// <returns>All of the entities within the Entity set</returns>
-        Task<IEnumerable<T>> GetAllAsync();
+        Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// </summary>
         ///<returns></returns>
-        Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> predicate);
+        Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Evaluates an expression of matching criteria to return the first
@@ -59,7 +60,7 @@ namespace BasicRepos
         /// </summary>
         /// <param name="predicate">An expression of the matching criteria</param>
         /// <returns>An instance of <see cref="T"/> if it exists, otherwise default</returns>
-        Task<T> GetAsync(Expression<Func<T, bool>> predicate);
+        Task<T> GetAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Takes an expression describing the type of entities that should exist and 
@@ -67,6 +68,6 @@ namespace BasicRepos
         /// </summary>
         /// <param name="predicate">An expression of the evaluation criteria</param>
         /// <returns><c>true</c> if any entity matches the criteria, otherwise <c>false</c></returns>
-        Task<bool> Exists(Expression<Func<T, bool>> predicate);
+        Task<bool> Exists(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
     }
 }
