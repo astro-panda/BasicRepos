@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace BasicRepos
@@ -12,6 +14,6 @@ namespace BasicRepos
         /// </summary>
         /// <param name="ids"></param>
         /// <returns></returns>
-        Task DeleteAsync(params TKey[] ids);
+        Task DeleteAsync(IEnumerable<TKey> ids, CancellationToken cancellationToken = default);
     }
 }

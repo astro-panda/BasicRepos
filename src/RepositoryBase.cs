@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace BasicRepos
@@ -68,8 +69,8 @@ namespace BasicRepos
         /// </summary>
         /// <param name="predicate">An expression of the matching criteria</param>
         /// <returns>An instance of <see cref="T"/> if it exists, otherwise default</returns>
-        public Task<T> GetAsync(Expression<Func<T, bool>> predicate)
-            => Entities.FirstOrDefaultAsync(predicate);
+        public Task<T> GetAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+            => Entities.FirstOrDefaultAsync(predicate, cancellationToken);
 
         /// <summary>
         /// Returns all entities within the set
@@ -80,16 +81,16 @@ namespace BasicRepos
         /// you take care when using this method
         /// </remarks>
         /// <returns>All of the entities within the Entity set</returns>
-        public virtual async Task<IEnumerable<T>> GetAllAsync()
-             => await Entities.ToListAsync();
+        public virtual async Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default)
+             => await Entities.ToListAsync(cancellationToken);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns></returns>
-        public virtual async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> predicate)
-            => await Entities.Where(predicate).ToListAsync();
+        public virtual async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+            => await Entities.Where(predicate).ToListAsync(cancellationToken);
 
         /// <summary>
         /// Takes an expression describing the type of entities that should exist and 
@@ -97,20 +98,20 @@ namespace BasicRepos
         /// </summary>
         /// <param name="predicate">An expression of the evaluation criteria</param>
         /// <returns><c>true</c> if any entity matches the criteria, otherwise <c>false</c></returns>
-        public Task<bool> Exists(Expression<Func<T, bool>> predicate)
-            => Entities.AnyAsync(predicate);
+        public Task<bool> Exists(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+            => Entities.AnyAsync(predicate, cancellationToken);
 
         /// <summary>
         /// Takes a set of new entities and adds them to the <see cref="DbContext"/>
         /// </summary>
         /// <param name="objects">The entities to be added</param>
         /// <returns></returns>
-        public virtual Task AddAsync(params T[] objects)
+        public virtual Task AddAsync(IEnumerable<T> objects, CancellationToken cancellationToken = default)
         {
             if(objects != null)
             {
                 Entities.AddRange(objects);
-                return Db.SaveChangesAsync();
+                return Db.SaveChangesAsync(cancellationToken);
             }
 
             return Task.CompletedTask;
@@ -121,14 +122,7 @@ namespace BasicRepos
         /// </summary>
         /// <param name="objects">The entities to be removed</param>
         /// <returns>A <see cref="Task"/> representing the work of deleting</returns>
-        public Task DeleteAsync(params T[] objects) => DeleteAsync(objects);
-
-        /// <summary>
-        /// Takes a set of entities and removes them from the <see cref="DbContext"/>
-        /// </summary>
-        /// <param name="objects">The entities to be removed</param>
-        /// <returns>A <see cref="Task"/> representing the work of deleting</returns>
-        public Task DeleteAsync(IEnumerable<T> objects)
+        public Task DeleteAsync(IEnumerable<T> objects, CancellationToken cancellationToken = default)
         {
             if(objects.Count() > 1)
             {
@@ -143,7 +137,7 @@ namespace BasicRepos
 
                 Entities.Remove(entity);
             }
-            return Db.SaveChangesAsync();
+            return Db.SaveChangesAsync(cancellationToken);
         }
 
         /// <summary>
@@ -151,10 +145,10 @@ namespace BasicRepos
         /// </summary>
         /// <param name="objects">The entities to be updated</param>
         /// <returns>A <see cref="Task"/> representing the work of updating and saving the entities</returns>
-        public virtual Task UpdateAsync(params T[] objects)
+        public virtual Task UpdateAsync(IEnumerable<T> objects, CancellationToken cancellationToken = default)
         {
             Entities.UpdateRange(objects);
-            return Db.SaveChangesAsync();
+            return Db.SaveChangesAsync(cancellationToken);
         }
     }
 }
