@@ -15,27 +15,31 @@ namespace BasicRepos
     public interface IReadOnlyRepository<T> where T : class
     {
         /// <summary>
-        /// Allows for the internal entities to be queried with any type specifications
+        /// Allows for the internal entities to be queried with any type specifications.
+        /// Bypasses entity caches
         /// </summary>
         /// <returns>A facade for the internal <see cref="DbSet{TEntity}"/></returns>
         IQueryable<T> Query();
 
         /// <summary>
-        /// Allows for the internal entities to be queried with any type specifications
+        /// Allows for the internal entities to be queried with any type specifications.
+        /// Bypasses entity caches
         /// </summary>
         /// <returns>A facade for the internal <see cref="DbSet{TEntity}"/></returns>
         IQueryable<T> Query(Expression<Func<T, bool>> predicate);
 
         /// <summary>
-        /// Allows for the internal entities to be queried with any type specifications
+        /// Allows for the internal entities to be queried with any type specifications.
+        /// Bypasses entity caches.
         /// </summary>
         /// <returns>A facade for the internal <see cref="DbSet{TEntity}"/></returns>
         IQueryable<K> Query<K>() where K : T;
 
         /// <summary>
         /// Allows for the internal entities to be queried without any type specifications
+        /// Bypasses entity caches
         /// </summary>
-        /// <returns>A facade for the internal <see cref="DbSet{TEntity}"/></returns>
+        /// <returns>A façade for the internal <see cref="DbSet{TEntity}"/></returns>
         IQueryable RawQuery();
 
         /// <summary>
