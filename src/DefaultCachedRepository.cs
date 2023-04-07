@@ -21,7 +21,7 @@ where TContext : DbContext
     public override async Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
     {
         if (cachedEntities.Any() == false)
-            await RefreshCache();
+            await RefreshCache(cancellationToken);
 
         return cachedEntities.Where(predicate.Compile());
     }
@@ -29,12 +29,12 @@ where TContext : DbContext
     public override async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         if (cachedEntities.Any() == false)
-            await RefreshCache();
+            await RefreshCache(cancellationToken);
 
         return cachedEntities;
     }
 
-    private async Task RefreshCache(CancellationToken cancellationToken = default)
+    public async Task RefreshCache(CancellationToken cancellationToken = default)
     {
         cachedEntities = await base.GetAllAsync(cancellationToken);
     }
