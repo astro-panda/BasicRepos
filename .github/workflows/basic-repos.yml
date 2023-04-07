@@ -47,4 +47,4 @@ jobs:
     - name: Publish ${{ inputs.package_name }}
       if: (github.ref_name == 'main' && github.event_name == 'push') || github.event_name == 'workflow_dispatch'
       run: |-        
-        dotnet nuget push **/*.nupkg -s github
+        dotnet nuget push "**/*.nupkg" -s github

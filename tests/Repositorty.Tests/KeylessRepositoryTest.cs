@@ -5,7 +5,6 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -196,7 +195,7 @@ namespace BasicRepos.Test.RepositortyTests
         }
 
         [Fact]
-        public async Task AddAsync_DoesNothing_When_objects_areNull()
+        public async Task AddAsync_Enumerable_DoesNothing_When_objects_areNull()
         {
             // Arrange   
       
@@ -204,7 +203,24 @@ namespace BasicRepos.Test.RepositortyTests
             sut = new KeylessRepository(_db);
 
             // Act
-            await sut.AddAsync(null);
+            await sut.AddAsync((IEnumerable<Trillig>)null);
+
+            // Assert
+            bool result = _db.Trilligs.Any(x => x.Name == "Z");
+
+            Assert.False(result);
+        }
+
+        [Fact]
+        public async Task AddAsync_Single_DoesNothing_When_objects_areNull()
+        {
+            // Arrange   
+
+
+            sut = new KeylessRepository(_db);
+
+            // Act
+            await sut.AddAsync((Trillig)null);
 
             // Assert
             bool result = _db.Trilligs.Any(x => x.Name == "Z");
