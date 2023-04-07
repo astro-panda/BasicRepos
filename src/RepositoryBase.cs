@@ -43,25 +43,25 @@ namespace BasicRepos
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns></returns>
-        public IQueryable<T> Query(Expression<Func<T, bool>> predicate) => Entities.Where(predicate);
+        public virtual IQueryable<T> Query(Expression<Func<T, bool>> predicate) => Entities.Where(predicate);
 
         /// <summary>
         /// Allows for the internal entities to be queried with any type specifications
         /// </summary>
         /// <returns>A facade for the internal <see cref="DbSet{TEntity}"/></returns>
-        public IQueryable<T> Query() => Entities;
+        public virtual IQueryable<T> Query() => Entities;
 
         /// <summary>
         /// Allows for the internal entities to be queried with any type specifications
         /// </summary>
         /// <returns>A facade for the internal <see cref="DbSet{TEntity}"/></returns>
-        public IQueryable<K> Query<K>() where K : T => Entities.Cast<K>();
+        public virtual IQueryable<K> Query<K>() where K : T => Entities.Cast<K>();
 
         /// <summary>
         /// Allows for the internal entities to be queried without any type specifications
         /// </summary>
         /// <returns>A facade for the internal <see cref="DbSet{TEntity}"/></returns>
-        public IQueryable RawQuery() => Entities;
+        public virtual IQueryable RawQuery() => Entities;
 
         /// <summary>
         /// Evaluates an expression of matching criteria to return the first
@@ -69,7 +69,7 @@ namespace BasicRepos
         /// </summary>
         /// <param name="predicate">An expression of the matching criteria</param>
         /// <returns>An instance of <see cref="T"/> if it exists, otherwise default</returns>
-        public Task<T> GetAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+        public virtual Task<T> GetAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
             => Entities.FirstOrDefaultAsync(predicate, cancellationToken);
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace BasicRepos
         /// </summary>
         /// <param name="predicate">An expression of the evaluation criteria</param>
         /// <returns><c>true</c> if any entity matches the criteria, otherwise <c>false</c></returns>
-        public Task<bool> Exists(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+        public virtual Task<bool> Exists(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
             => Entities.AnyAsync(predicate, cancellationToken);
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace BasicRepos
         /// </summary>
         /// <param name="objects">The entities to be removed</param>
         /// <returns>A <see cref="Task"/> representing the work of deleting</returns>
-        public Task DeleteAsync(IEnumerable<T> objects, CancellationToken cancellationToken = default)
+        public virtual Task DeleteAsync(IEnumerable<T> objects, CancellationToken cancellationToken = default)
         {
             if(objects.Count() > 1)
             {

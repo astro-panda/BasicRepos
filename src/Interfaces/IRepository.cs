@@ -10,7 +10,7 @@ namespace BasicRepos
     /// <see cref="IRepository{T}"/> to all of its derived repositories
     /// </summary>
     /// <typeparam name="T">The <see cref="Type"/> of entity this repository operates with</typeparam>    
-    public interface IRepository<T> 
+    public interface IRepository<T>  : IReadOnlyRepository<T>
         where T : class 
     {
         /// <summary>

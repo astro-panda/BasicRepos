@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace BasicRepos
 {
-    public interface IKeyedRepository<T, TKey> : IRepository<T>
+    public interface IKeyedRepository<T, TKey> : IRepository<T>, IKeyedReadOnlyRepository<T, TKey>
         where T : class, IKeyedEntity<TKey>
         where TKey : IEquatable<TKey>
     {
