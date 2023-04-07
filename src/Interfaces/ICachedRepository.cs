@@ -1,4 +1,6 @@
 using BasicRepos;
+using System.Threading.Tasks;
+using System.Threading;
 
 /// <summary>
 /// Simply a repository that is expected to maintain a cache of the data. Has 
@@ -8,4 +10,10 @@ using BasicRepos;
 public interface ICachedRepository<TEntity> : IRepository<TEntity>, IReadOnlyRepository<TEntity>
         where TEntity : class
 {
+    /// <summary>
+    /// Refreshes the internal cache with fresh data from the upstream data source
+    /// </summary>
+    /// <param name="cancellationToken">A token to cancel operations</param>
+    /// <returns>A <see cref="Task"/> representing the work of refreshing the data</returns>
+    Task RefreshCache(CancellationToken cancellationToken = default);
 }
