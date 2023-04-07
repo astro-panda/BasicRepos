@@ -1,4 +1,4 @@
-name: Indaco.Data
+name: Basic Repos
 
 on:
   push:
@@ -10,9 +10,41 @@ on:
   workflow_dispatch:
 
 jobs:
-  default:
-    uses: astro-panda/workflow-templates/.github/workflows/dotnet_package.yml@main
-    with:
-      package_name: BasicRepos
-      project_path: ./src/BasicRepos.csproj
-      test_project: ./tests/BasicRepos.Test.csproj
+  Build_Test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3.3.0
+    
+    - name: Add Package source
+      run: dotnet nuget add source https://nuget.pkg.github.com/astro-panda/index.json --name github --username "${{ github.repository_owner }}" --password "${{ secrets.GITHUB_TOKEN }}" --store-password-in-clear-text
+
+    - name: Restore ${{ inputs.package_name }}
+      run: |-
+        dotnet restore ${{ inputs.project_path }}        
+    
+    - name: Build ${{ inputs.package_name }}
+      run: |-
+        dotnet build --no-restore ${{ inputs.project_path }}        
+
+    - name: Test ${{ inputs.package_name }}
+      if: ${{ inputs.test_project }}
+      run: |-        
+        dotnet test ${{ inputs.test_project }} --logger trx --results-directory "${{ runner.temp }}"        
+    
+    - name: Test ${{ inputs.package_name }}
+      if: always()
+      uses: NasAmin/trx-parser@v0.2.0
+      with:
+        TRX_PATH: "${{ runner.temp }}"
+        REPO_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+    - name: Pack ${{ inputs.package_name }}
+      if: (github.ref_name == 'main' && github.event_name == 'push') || github.event_name == 'workflow_dispatch'
+      run: |-
+        dotnet pack ${{ inputs.project_path }} --output "${{ runner.temp }}"   
+    
+    - name: Publish ${{ inputs.package_name }}
+      if: (github.ref_name == 'main' && github.event_name == 'push') || github.event_name == 'workflow_dispatch'
+      run: |-        
+        dotnet nuget push **/*.nupkg -s github
