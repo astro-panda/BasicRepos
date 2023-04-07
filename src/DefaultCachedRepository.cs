@@ -17,6 +17,7 @@ where TContext : DbContext
     public DefaultCachedRepository(TContext dbFactory) : base(dbFactory)
     {
     }
+    
 
     public override async Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
     {
@@ -32,6 +33,22 @@ where TContext : DbContext
             await RefreshCache(cancellationToken);
 
         return cachedEntities;
+    }
+
+    public override async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+    {
+        if (cachedEntities.Any() == false)
+            await RefreshCache(cancellationToken);
+
+        return cachedEntities.FirstOrDefault(predicate.Compile());
+    }
+
+    public override async Task<bool> Exists(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+    {
+        if (cachedEntities.Any() == false)
+            await RefreshCache(cancellationToken);
+
+        return cachedEntities.Any(predicate.Compile());
     }
 
     public async Task RefreshCache(CancellationToken cancellationToken = default)
