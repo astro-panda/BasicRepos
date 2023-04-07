@@ -1,0 +1,18 @@
+name: Indaco.Data
+
+on:
+  push:
+    branches:
+      - main    
+  pull_request:
+    branches:
+      - main    
+  workflow_dispatch:
+
+jobs:
+  default:
+    uses: astro-panda/workflow-templates/.github/workflows/dotnet_package.yml@main
+    with:
+      package_name: BasicRepos
+      project_path: ./src/BasicRepos.csproj
+      test_project: ./tests/BasicRepos.Test.csproj
