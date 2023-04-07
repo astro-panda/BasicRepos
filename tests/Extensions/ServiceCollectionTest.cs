@@ -110,5 +110,27 @@ namespace BasicRepos.Test.Extensions
             Assert.NotNull(moamrathRepo);
         }
 
+        [Fact]
+        public void AddBasicRepos_WithDbContext_registers_an_ICachedRepository_ForeachDbset()
+        {
+            // Arrange
+            IServiceCollection services = new ServiceCollection();
+            services.AddDbContext<TestDbContext>(opts => opts.UseInMemoryDatabase("lolcat"));
+
+            // Act
+            services.AddBasicRepos<TestDbContext>();
+            IServiceProvider serviceProvider = services.BuildServiceProvider();
+
+            // Assert
+            var trilligRepo = serviceProvider.GetService<ICachedRepository<Trillig>>();
+            Assert.NotNull(trilligRepo);
+
+            var brilligRepo = serviceProvider.GetService<ICachedRepository<Brillig>>();
+            Assert.NotNull(brilligRepo);
+
+            var moamrathRepo = serviceProvider.GetService<ICachedRepository<Moamrath>>();
+            Assert.NotNull(moamrathRepo);
+        }
+
     }
 }
