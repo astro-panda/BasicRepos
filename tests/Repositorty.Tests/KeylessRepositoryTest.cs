@@ -331,7 +331,7 @@ namespace BasicRepos.Test.RepositortyTests
         [InlineData(5)]
         public async Task DeleteAsync_RemovesValues_FromStore(int id)
         {
-            var mockDb = new Mock<TestDbContext>();
+            var mockDb = new Mock<TestDbContext>(new DbContextOptionsBuilder<TestDbContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
             var mockSet = new Mock<DbSet<Trillig>>();
             var trilligList = _db.Trilligs.ToList();
 
@@ -354,7 +354,7 @@ namespace BasicRepos.Test.RepositortyTests
         public async Task UpdateAsync_SimplyCalls_DbSaveChangesAsync()
         {
             // Arrange
-            var mockDb = new Mock<TestDbContext>();
+            var mockDb = new Mock<TestDbContext>(new DbContextOptionsBuilder<TestDbContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
             var mockSet = new Mock<DbSet<Trillig>>();
             mockDb.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
             mockDb.Setup(x => x.Set<Trillig>()).Returns(mockSet.Object);
