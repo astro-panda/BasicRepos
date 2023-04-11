@@ -7,17 +7,7 @@ namespace BasicRepos.Test.Setup
 {
     public class TestDbContext : DbContext
     {
-        public TestDbContext() : this(new DbContextOptionsBuilder<TestDbContext>())
-        {
-
-        }
-
         public TestDbContext(DbContextOptions<TestDbContext> options) : base(options)
-        {
-
-        }
-
-        public TestDbContext(DbContextOptionsBuilder<TestDbContext> builder) : this(builder.Options)
         {
 
         }

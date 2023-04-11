@@ -10,12 +10,12 @@ namespace BasicRepos;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddBasicRepos<TContext>(this IServiceCollection services) where TContext : DbContext, new()
+    public static IServiceCollection AddBasicRepos<TContext>(this IServiceCollection services) where TContext : DbContext
     {
         return ScaffoldBasicRepos<TContext>(services);
     }
 
-    public static IServiceCollection ScaffoldBasicRepos<TContext>(IServiceCollection services) where TContext : DbContext, new()
+    public static IServiceCollection ScaffoldBasicRepos<TContext>(IServiceCollection services) where TContext : DbContext
     {
         var serviceProvider = services.BuildServiceProvider();
         TContext dbContext = serviceProvider.GetRequiredService<TContext>();
