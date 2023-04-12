@@ -48,7 +48,7 @@ jobs:
     - name: Pack ${{ inputs.package_name }}
       if: (github.ref_name == 'main' && github.event_name == 'push') || github.event_name == 'workflow_dispatch' || github.event_name == 'release'
       run: |-
-        dotnet pack ${{ inputs.project_path }} -p:Version=4.0.0$build_version-${{ github.run_number }} --output "${{ runner.temp }}"   
+        dotnet pack ${{ inputs.project_path }} --version-suffix $build_version-${{ github.run_number }} --output "${{ runner.temp }}"   
     
     - name: Publish ${{ inputs.package_name }}
       if: (github.ref_name == 'main' && github.event_name == 'push') || github.event_name == 'workflow_dispatch' || github.event_name == 'release'
