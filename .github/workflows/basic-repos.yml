@@ -14,7 +14,7 @@ on:
 
 jobs:
   Build_Test:
-    environment: ${{ fromJSON('{"release":"prod","push":"test"}')[github.event_name] || 'PR' }} 
+    environment: ${{ fromJSON('{"release":"prod","push":"preview"}')[github.event_name] || 'PR' }} 
     runs-on: ubuntu-latest
     env:
       build_version: ${{ fromJSON('{"release":"","push":"-preview"}')[github.event_name] || '-beta' }} 
@@ -46,9 +46,14 @@ jobs:
         REPO_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
     - name: Pack ${{ inputs.package_name }}
-      if: (github.ref_name == 'main' && github.event_name == 'push') || github.event_name == 'workflow_dispatch' || github.event_name == 'release'
+      if: (github.ref_name == 'main' && github.event_name == 'push') || github.event_name == 'workflow_dispatch'
       run: |-
-        dotnet pack ${{ inputs.project_path }} --version-suffix $build_version-${{ github.run_number }} --output "${{ runner.temp }}"   
+        dotnet pack ${{ inputs.project_path }} --version-suffix $build_version-${{ github.run_number }} --output "${{ runner.temp }}"
+
+    - name: Pack ${{ inputs.package_name }} Production
+      if: github.event_name == 'release'
+      run: |-
+        dotnet pack ${{ inputs.project_path }} --output "${{ runner.temp }}"
     
     - name: Publish ${{ inputs.package_name }}
       if: (github.ref_name == 'main' && github.event_name == 'push') || github.event_name == 'workflow_dispatch' || github.event_name == 'release'
