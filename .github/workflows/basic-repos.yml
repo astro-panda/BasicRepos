@@ -6,12 +6,18 @@ on:
       - main    
   pull_request:
     branches:
-      - main    
+      - main
+  release:
+    types:
+      - created
   workflow_dispatch:
 
 jobs:
   Build_Test:
+    environment: ${{ fromJSON('{"release":"prod","push":"test"}')[github.event_name] || 'PR' }} 
     runs-on: ubuntu-latest
+    env:
+      build_version: ${{ fromJSON('{"release":"","push":"-preview"}')[github.event_name] || '-beta' }} 
     steps:
     - name: checkout
       uses: actions/checkout@v3.3.0
@@ -40,11 +46,11 @@ jobs:
         REPO_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
     - name: Pack ${{ inputs.package_name }}
-      if: (github.ref_name == 'main' && github.event_name == 'push') || github.event_name == 'workflow_dispatch'
+      if: (github.ref_name == 'main' && github.event_name == 'push') || github.event_name == 'workflow_dispatch' || github.event_name == 'release'
       run: |-
-        dotnet pack ${{ inputs.project_path }} --output "${{ runner.temp }}"   
+        dotnet pack ${{ inputs.project_path }} -p:Version=4.0.0$build_version-${{ github.run_number }} --output "${{ runner.temp }}"   
     
     - name: Publish ${{ inputs.package_name }}
-      if: (github.ref_name == 'main' && github.event_name == 'push') || github.event_name == 'workflow_dispatch'
+      if: (github.ref_name == 'main' && github.event_name == 'push') || github.event_name == 'workflow_dispatch' || github.event_name == 'release'
       run: |-        
         dotnet nuget push ${{ runner.temp }}/*.nupkg -s github
