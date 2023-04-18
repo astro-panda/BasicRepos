@@ -10,14 +10,14 @@ on:
   release:
     types:
       - created
-  workflow_dispatch:
 
 jobs:
-  Build_Test:
-    environment: ${{ fromJSON('{"release":"prod","push":"preview"}')[github.event_name] || 'PR' }} 
+  Build_Test:     
     runs-on: ubuntu-latest
     env:
-      build_version: ${{ fromJSON('{"release":"","push":"-preview"}')[github.event_name] || '-beta' }} 
+      package_name: BasicRepos
+      project_path: src/BasicRepos.csproj
+      test_project_path: tests/BasicRepos.Test.csproj      
     steps:
     - name: checkout
       uses: actions/checkout@v3.3.0
@@ -25,37 +25,32 @@ jobs:
     - name: Add Package source
       run: dotnet nuget add source https://nuget.pkg.github.com/astro-panda/index.json --name github --username "${{ github.repository_owner }}" --password "${{ secrets.GITHUB_TOKEN }}" --store-password-in-clear-text
 
-    - name: Restore ${{ inputs.package_name }}
+    - name: Restore ${{ env.package_name }}
       run: |-
-        dotnet restore ${{ inputs.project_path }}        
+        dotnet restore ${{ env.project_path }}        
     
-    - name: Build ${{ inputs.package_name }}
+    - name: Build ${{ env.package_name }}
       run: |-
-        dotnet build --no-restore ${{ inputs.project_path }}        
+        dotnet build --no-restore ${{ env.project_path }}        
 
-    - name: Test ${{ inputs.package_name }}
-      if: ${{ inputs.test_project }}
+    - name: Test ${{ env.package_name }}
+      if: ${{ env.test_project_path }}
       run: |-        
-        dotnet test ${{ inputs.test_project }} --logger trx --results-directory "${{ runner.temp }}"        
+        dotnet test ${{ env.test_project_path }} --logger trx --results-directory "${{ runner.temp }}"        
     
-    - name: Test ${{ inputs.package_name }}
+    - name: Test ${{ env.package_name }}
       if: always()
       uses: NasAmin/trx-parser@v0.2.0
       with:
         TRX_PATH: "${{ runner.temp }}"
         REPO_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-    - name: Pack ${{ inputs.package_name }}
-      if: (github.ref_name == 'main' && github.event_name == 'push') || github.event_name == 'workflow_dispatch'
-      run: |-
-        dotnet pack ${{ inputs.project_path }} --version-suffix $build_version-${{ github.run_number }} --output "${{ runner.temp }}"
-
-    - name: Pack ${{ inputs.package_name }} Production
+    - name: Pack ${{ env.package_name }}
       if: github.event_name == 'release'
       run: |-
-        dotnet pack ${{ inputs.project_path }} -p:Version=${{ github.ref_name }} --output "${{ runner.temp }}"
+        dotnet pack ${{ env.project_path }} -p:Version=${{ github.ref_name }} --output "${{ runner.temp }}"
     
-    - name: Publish ${{ inputs.package_name }}
-      if: (github.ref_name == 'main' && github.event_name == 'push') || github.event_name == 'workflow_dispatch' || github.event_name == 'release'
+    - name: Publish ${{ env.package_name }}
+      if: github.event_name == 'release'
       run: |-        
         dotnet nuget push ${{ runner.temp }}/*.nupkg -s github
