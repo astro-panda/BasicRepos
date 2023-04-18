@@ -362,10 +362,28 @@ namespace BasicRepos.Test.RepositortyTests
             sut = new KeylessRepository(_db);
 
             // Act
-            await sut.UpdateAsync(Array.Empty<Trillig>());
+            await sut.UpdateAsync(new List<Trillig>() { new Trillig(), new Trillig(), new Trillig() });
 
             mockDb.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once());
             mockSet.Verify(x => x.UpdateRange(It.IsAny<IEnumerable<Trillig>>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_When_No_Entities_DoesNotCall_DbSaveChangesAsync()
+        {
+                        // Arrange
+            var mockDb = new Mock<TestDbContext>(new DbContextOptionsBuilder<TestDbContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
+            var mockSet = new Mock<DbSet<Trillig>>();
+            mockDb.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
+            mockDb.Setup(x => x.Set<Trillig>()).Returns(mockSet.Object);
+            _db = mockDb.Object;
+            sut = new KeylessRepository(_db);
+
+            // Act
+            await sut.UpdateAsync(Array.Empty<Trillig>());
+
+            mockDb.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
+            mockSet.Verify(x => x.UpdateRange(It.IsAny<IEnumerable<Trillig>>()), Times.Never);
         }
     }
 }
