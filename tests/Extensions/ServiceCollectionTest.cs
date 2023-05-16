@@ -1,4 +1,5 @@
-﻿using BasicRepos.Test.Setup;
+﻿using BasicRepos.Exceptions;
+using BasicRepos.Test.Setup;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -12,9 +13,6 @@ namespace BasicRepos.Test.Extensions
 {
     public class ServiceCollectionTest
     {
-        //private TestDbContext _db;
-        //private DbContextOptions<TestDbContext> _dbOptions = new D
-
         private void ScaffoldDbContextConfiguration()
         {
 
@@ -28,7 +26,7 @@ namespace BasicRepos.Test.Extensions
             services.AddDbContext<TestDbContext>(opts => opts.UseInMemoryDatabase("lolcat"));
 
             // Act
-            services.AddBasicRepos<TestDbContext>();
+            services.AddBasicRepos<TestDbContext>(options => options.EnabledCachedRepositories = false);
             IServiceProvider serviceProvider = services.BuildServiceProvider();
             
             // Assert
@@ -51,7 +49,7 @@ namespace BasicRepos.Test.Extensions
             services.AddDbContext<TestDbContext>(opts => opts.UseInMemoryDatabase("lolcat"));
 
             // Act
-            services.AddBasicRepos<TestDbContext>();
+            services.AddBasicRepos<TestDbContext>(options => options.EnabledCachedRepositories = false);
             IServiceProvider serviceProvider = services.BuildServiceProvider();
 
             // Assert
@@ -74,7 +72,7 @@ namespace BasicRepos.Test.Extensions
             services.AddDbContext<TestDbContext>(opts => opts.UseInMemoryDatabase("lolcat"));
 
             // Act
-            services.AddBasicRepos<TestDbContext>();
+            services.AddBasicRepos<TestDbContext>(options => options.EnabledCachedRepositories = false);
             IServiceProvider serviceProvider = services.BuildServiceProvider();
 
             // Assert
@@ -96,7 +94,7 @@ namespace BasicRepos.Test.Extensions
             services.AddDbContext<TestDbContext>(opts => opts.UseInMemoryDatabase("lolcat"));
 
             // Act
-            services.AddBasicRepos<TestDbContext>();
+            services.AddBasicRepos<TestDbContext>(options => options.EnabledCachedRepositories = false);
             IServiceProvider serviceProvider = services.BuildServiceProvider();
 
             // Assert
@@ -116,6 +114,7 @@ namespace BasicRepos.Test.Extensions
             // Arrange
             IServiceCollection services = new ServiceCollection();
             services.AddDbContext<TestDbContext>(opts => opts.UseInMemoryDatabase("lolcat"));
+            services.AddPooledDbContextFactory<TestDbContext>(opts => opts.UseInMemoryDatabase("lolcat"));
 
             // Act
             services.AddBasicRepos<TestDbContext>();
@@ -130,6 +129,43 @@ namespace BasicRepos.Test.Extensions
 
             var moamrathRepo = serviceProvider.GetService<ICachedRepository<Moamrath>>();
             Assert.NotNull(moamrathRepo);
+        }
+
+        [Fact]
+        public void AddBasicRepos_With_Enabled_Cached_Repositories_FALSE_registers_NO_ICachedRepository()
+        {
+            // Arrange
+            IServiceCollection services = new ServiceCollection();
+            services.AddDbContext<TestDbContext>(opts => opts.UseInMemoryDatabase("lolcat"));
+
+            // Act
+            services.AddBasicRepos<TestDbContext>(options => options.EnabledCachedRepositories = false);
+            IServiceProvider serviceProvider = services.BuildServiceProvider();
+
+            // Assert
+            var trilligRepo = serviceProvider.GetService<ICachedRepository<Trillig>>();
+            Assert.Null(trilligRepo);
+
+            var brilligRepo = serviceProvider.GetService<ICachedRepository<Brillig>>();
+            Assert.Null(brilligRepo);
+
+            var moamrathRepo = serviceProvider.GetService<ICachedRepository<Moamrath>>();
+            Assert.Null(moamrathRepo);
+        }
+
+        [Fact]
+        public void AddBasicRepos_With_EnabledCachedRepositories_TRUE_But_No_Pooled_DbContextFactory_Throws_RepositoryConfiguration()
+        {
+            // Arrange
+            IServiceCollection services = new ServiceCollection();
+            services.AddDbContext<TestDbContext>(opts => opts.UseInMemoryDatabase("lolcat"));
+
+            // Act
+            var ex = Record.Exception(() => services.AddBasicRepos<TestDbContext>());
+
+            // Assert
+            Assert.NotNull(ex);
+            Assert.IsType<RepositoryConfigurationException>(ex);
         }
 
     }

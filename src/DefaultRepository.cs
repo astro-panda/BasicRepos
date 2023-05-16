@@ -1,13 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace BasicRepos
+namespace BasicRepos;
+
+public class DefaultRepository<TEntity, TContext> : RepositoryBase<TEntity> 
+    where TEntity : class
+    where TContext : DbContext
 {
-    public class DefaultRepository<TEntity, TContext> : RepositoryBase<TEntity> 
-        where TEntity : class
-        where TContext : DbContext
+    public DefaultRepository(TContext dbContext) : base(dbContext)
     {
-        public DefaultRepository(TContext db) : base(db)
-        {
-        }
     }
 }

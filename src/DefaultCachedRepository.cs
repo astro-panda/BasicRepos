@@ -14,10 +14,10 @@ where TContext : DbContext
 {
     protected IEnumerable<TEntity> cachedEntities { get; set; } = new List<TEntity>();
 
-    public DefaultCachedRepository(TContext dbFactory) : base(dbFactory)
+    public DefaultCachedRepository(IDbContextFactory<TContext> dbContextFactory) : base(dbContextFactory.CreateDbContext())
     {
     }
-    
+
 
     public override async Task<IEnumerable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
     {

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BasicRepos.Exceptions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
@@ -10,12 +11,14 @@ namespace BasicRepos;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddBasicRepos<TContext>(this IServiceCollection services) where TContext : DbContext
+    public static IServiceCollection AddBasicRepos<TContext>(this IServiceCollection services, Action<RepositoryOptions> configure = null) where TContext : DbContext
     {
-        return ScaffoldBasicRepos<TContext>(services);
+        RepositoryOptions options = new();
+        configure?.Invoke(options);
+        return ScaffoldBasicRepos<TContext>(services, options);
     }
 
-    public static IServiceCollection ScaffoldBasicRepos<TContext>(IServiceCollection services) where TContext : DbContext
+    private static IServiceCollection ScaffoldBasicRepos<TContext>(IServiceCollection services, RepositoryOptions options) where TContext : DbContext
     {
         var serviceProvider = services.BuildServiceProvider();
         TContext dbContext = serviceProvider.GetRequiredService<TContext>();
@@ -23,14 +26,21 @@ public static class ServiceCollectionExtensions
 
         IEnumerable<Type> entityTypes = dbContext.Model.GetEntityTypes().Select(x => x.ClrType.GetTypeInfo());
 
-        BindBasicRepos(services, dbContextType, entityTypes);
-        BindKeyedBasicRepos(services, dbContextType, entityTypes);
-        BindCachedBasicRepos(services, dbContextType, entityTypes);
+        BindBasicRepos(services, dbContextType, entityTypes, options);
+        BindKeyedBasicRepos(services, dbContextType, entityTypes, options);
+
+        if (options.EnabledCachedRepositories)
+        {
+            BindCachedBasicRepos<TContext>(services, dbContextType, entityTypes);
+        }
 
         return services;
     }
 
-    private static IServiceCollection BindBasicRepos(IServiceCollection services, Type dbContextType, IEnumerable<Type> entityTypes)
+    private static IServiceCollection BindBasicRepos(IServiceCollection services,
+                                                     Type dbContextType,
+                                                     IEnumerable<Type> entityTypes,
+                                                     RepositoryOptions options)
     {
         Type writeRepo = typeof(IRepository<>);
         Type readRepo = typeof(IReadOnlyRepository<>);
@@ -48,7 +58,10 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    private static IServiceCollection BindKeyedBasicRepos(IServiceCollection services, Type dbContextType, IEnumerable<Type> entityTypes)
+    private static IServiceCollection BindKeyedBasicRepos(IServiceCollection services,
+                                                          Type dbContextType,
+                                                          IEnumerable<Type> entityTypes,
+                                                          RepositoryOptions options)
     {
         Type writeKeyedRepo = typeof(IKeyedRepository<,>);
         Type readKeyedRepo = typeof(IKeyedReadOnlyRepository<,>);
@@ -82,17 +95,30 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    private static IServiceCollection BindCachedBasicRepos(IServiceCollection services, Type dbContextType, IEnumerable<Type> entityTypes)
+    private static IServiceCollection BindCachedBasicRepos<TContext>(IServiceCollection services,
+                                                           Type dbContextType,
+                                                           IEnumerable<Type> entityTypes) where TContext : DbContext
     {
+        ValidateCachedRepositoryEnvironment<TContext>(services);
+
         Type cachedRepoType = typeof(ICachedRepository<>);        
         Type defaultCachedRepo = typeof(DefaultCachedRepository<,>);
+        Type dbContextFactoryType = typeof(IDbContextFactory<>);
 
         foreach (var entityType in entityTypes)
         {
-            services.TryAddScoped(cachedRepoType.MakeGenericType(entityType),
-                                     defaultCachedRepo.MakeGenericType(entityType, dbContextType));
+            services.TryAddScoped(cachedRepoType.MakeGenericType(entityType), sp =>
+            {
+                return Activator.CreateInstance(defaultCachedRepo.MakeGenericType(entityType, dbContextType), sp.GetService<IDbContextFactory<TContext>>());
+            });
         }
 
         return services;
+    }
+
+    private static void ValidateCachedRepositoryEnvironment<TContext>(IServiceCollection services) where TContext : DbContext
+    {
+        if (services.Any(x => x.ServiceType == typeof(IDbContextFactory<TContext>)) == false)
+            throw new RepositoryConfigurationException($"Cannot use Cached Repositories without DbContext Factory Pooling. If you need cached repositories, please enabled DbContext Pooling with 'services.AddPooledDbContextFactory<TContext>()'");
     }
 }
