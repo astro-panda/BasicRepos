@@ -50,8 +50,12 @@ jobs:
       run: |-
         dotnet pack ${{ env.project_path }} -p:Version=${{ github.ref_name }} --output "${{ runner.temp }}"
     
-    - name: Publish ${{ env.package_name }}
+    - name: Publish ${{ env.package_name }} to GitHub Packages
       if: github.event_name == 'release'
       run: |-        
-        dotnet nuget push ${{ runner.temp }}/*.nupkg -s github
-        dotnet nuget push ${{ runner.temp }}/*.nupkg -k ${{ secrets.NUGET_PUBLIC_API_KEY }} -s https://api.nuget.org/v3/index.json
+        dotnet nuget push ${{ runner.temp }}/*.nupkg -s github        
+
+    - name: Publish ${{ env.package_name }} to NuGet
+      if: github.event_name == 'release' && always()
+      run: |-        
+        dotnet nuget push ${{ runner.temp }}/*.nupkg -k ${{ secrets.NUGET_PUBLIC_API_KEY }} -s https://api.nuget.org/v3/index.json    
