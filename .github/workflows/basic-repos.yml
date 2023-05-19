@@ -54,4 +54,4 @@ jobs:
       if: github.event_name == 'release'
       run: |-        
         dotnet nuget push ${{ runner.temp }}/*.nupkg -s github
-        dotnet nuget push ${{ runner.temp }}/*.nupkg -k ${{ secrets.NUGET_PUBLIC_API_KEY }}
+        dotnet nuget push ${{ runner.temp }}/*.nupkg -k ${{ secrets.NUGET_PUBLIC_API_KEY }} -s https://api.nuget.org/v3/index.json
