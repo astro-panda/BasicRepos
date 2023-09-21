@@ -65,6 +65,9 @@ namespace BasicRepos
 
         public virtual Task AddAsync(IEnumerable<T> objects, CancellationToken cancellationToken = default)
         {
+            if(cancellationToken.IsCancellationRequested)
+                 return Task.CompletedTask;
+
             if(objects != null && objects.Any())
             {
                 Entities.AddRange(objects);
@@ -76,6 +79,9 @@ namespace BasicRepos
 
         public virtual Task DeleteAsync(IEnumerable<T> objects, CancellationToken cancellationToken = default)
         {
+            if(cancellationToken.IsCancellationRequested)
+                 return Task.CompletedTask;
+
             if(objects.Count() > 1)
             {
                 Entities.RemoveRange(objects);
@@ -94,6 +100,9 @@ namespace BasicRepos
      
         public virtual Task UpdateAsync(IEnumerable<T> objects, CancellationToken cancellationToken = default)
         {
+            if(cancellationToken.IsCancellationRequested)
+                 return Task.CompletedTask;
+
             if (objects is null || objects.Any() == false)
                 return Task.CompletedTask;
 
@@ -103,40 +112,55 @@ namespace BasicRepos
 
         public async Task AddAsync(T entity, CancellationToken cancellationToken = default)
         {
+            if(cancellationToken.IsCancellationRequested)
+                 return;
+
             if (entity is null)
                 return;
 
             await Entities.AddAsync(entity);
-            await Db.SaveChangesAsync();
+            await Db.SaveChangesAsync(cancellationToken);
         }
 
         public Task UpdateAsync(T entity, CancellationToken cancellationToken = default)
         {
+            if(cancellationToken.IsCancellationRequested)
+                 return Task.CompletedTask;
+
             if (entity is null)
                 return Task.CompletedTask;
 
             Entities.Update(entity);
-            return Db.SaveChangesAsync();
+            return Db.SaveChangesAsync(cancellationToken);
         }
 
         public Task DeleteAsync(T entity, CancellationToken cancellationToken = default)
         {
+            if(cancellationToken.IsCancellationRequested)
+                 return Task.CompletedTask;
+
             if (entity is null)
                 return Task.CompletedTask;
 
             Entities.Remove(entity);
-            return Db.SaveChangesAsync();
+            return Db.SaveChangesAsync(cancellationToken);
         }
 
         public Task DeleteWhereAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
         {
+            if(cancellationToken.IsCancellationRequested)
+                 return Task.CompletedTask;
+
             Entities.RemoveRange(Entities.Where(predicate));
-            return Db.SaveChangesAsync();
+            return Db.SaveChangesAsync(cancellationToken);
         }
 
         public Task ApplyChanges(CancellationToken cancellationToken = default)
         {
-            return Db.SaveChangesAsync(); 
+            if (cancellationToken.IsCancellationRequested)
+                return Task.CompletedTask;
+
+            return Db.SaveChangesAsync(cancellationToken); 
         }
     }
 }
