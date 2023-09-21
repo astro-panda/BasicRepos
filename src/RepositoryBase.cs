@@ -128,6 +128,12 @@ namespace BasicRepos
             return Db.SaveChangesAsync();
         }
 
+        public Task DeleteWhereAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+        {
+            Entities.RemoveRange(Entities.Where(predicate));
+            return Db.SaveChangesAsync();
+        }
+
         public Task ApplyChanges(CancellationToken cancellationToken = default)
         {
             return Db.SaveChangesAsync(); 
