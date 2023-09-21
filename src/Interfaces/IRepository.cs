@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -55,6 +56,13 @@ namespace BasicRepos
         /// <param name="entity">The entity to be removed</param>
         /// <returns>A <see cref="Task"/> representing the work of deleting</returns>
         Task DeleteAsync(T entity, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Deletes a set of entities satisfying a provided expression
+        /// </summary>
+        /// <param name="predicate">The expression to filter the entities</param>
+        /// <returns>A <see cref="Task"/> representing the work of deleting</returns>
+        Task DeleteWhereAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Simply saves any changes to all currently tracked entities without needing
