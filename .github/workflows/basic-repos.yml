@@ -31,7 +31,7 @@ jobs:
     
     - name: Build ${{ env.package_name }}
       run: |-
-        dotnet build --no-restore ${{ env.project_path }}        
+        dotnet build --no-restore ${{ env.project_path }} -c Release  
 
     - name: Test ${{ env.package_name }}
       if: ${{ env.test_project_path }}
